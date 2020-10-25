@@ -7,6 +7,20 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllRestaurants",
+                query = "select r from RestaurantEntity r"),
+        @NamedQuery(
+                name = "getRestaurantByName",
+                query = "select r from RestaurantEntity r where r.restaurantName = :restaurantName"),
+        @NamedQuery(
+                name = "getRestaurantByCategoryId",
+                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId"),
+        @NamedQuery(
+                name = "getRestaurantById",
+                query = "select r from RestaurantEntity r where r.id = :restaurantId")
+})
 public class RestaurantEntity {
     private int id;
     private String uuid;
