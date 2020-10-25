@@ -9,17 +9,17 @@ import java.util.Objects;
 @Table(name = "restaurant", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
         @NamedQuery(
-                name = "getAllRestaurants",
-                query = "select r from RestaurantEntity r"),
+                name = "getAllRestaurant",
+                query = "select r from RestaurantEntity r order by r.customerRating desc"),
         @NamedQuery(
                 name = "getRestaurantByName",
-                query = "select r from RestaurantEntity r where r.restaurantName = :restaurantName"),
+                query = "select r from RestaurantEntity r where lower(r.restaurantName) like lower(:restaurantName) order by r.restaurantName asc"),
         @NamedQuery(
                 name = "getRestaurantByCategoryId",
-                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId"),
+                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId order by r.restaurantName asc"),
         @NamedQuery(
                 name = "getRestaurantById",
-                query = "select r from RestaurantEntity r where r.id = :restaurantId")
+                query = "select r from RestaurantEntity r where r.id = :restaurantId order by r.restaurantName asc")
 })
 public class RestaurantEntity {
     private int id;

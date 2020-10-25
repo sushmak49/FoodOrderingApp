@@ -14,8 +14,8 @@ public class RestaurantDao {
     private EntityManager entityManager;
 
     /** A method to fetch list of all restaurants */
-    public List<RestaurantEntity> getAllRestaurants() {
-        List<RestaurantEntity> restaurantList = entityManager.createNamedQuery("getAllRestaurants", RestaurantEntity.class).getResultList();
+    public List<RestaurantEntity> getAllRestaurant() {
+        List<RestaurantEntity> restaurantList = entityManager.createNamedQuery("getAllRestaurant", RestaurantEntity.class).getResultList();
         return restaurantList;
     }
 
@@ -26,7 +26,7 @@ public class RestaurantDao {
     public RestaurantEntity getRestaurantByName(String restaurantName) {
         try {
             return entityManager.createNamedQuery("getRestaurantByName", RestaurantEntity.class)
-                    .setParameter("restaurantName", restaurantName)
+                    .setParameter("restaurantName", "%" + restaurantName + "%")
                     .getSingleResult();
         } catch (NoResultException nre) {
             nre.printStackTrace();
@@ -62,7 +62,7 @@ public class RestaurantDao {
     /**
         Method to update/Persist Restaurant details
      */
-    public RestaurantEntity updateRestaurantDetail(RestaurantEntity restaurantEntity) {
+    public RestaurantEntity updateRestaurant(RestaurantEntity restaurantEntity) {
         entityManager.persist(restaurantEntity);
         return restaurantEntity;
     }

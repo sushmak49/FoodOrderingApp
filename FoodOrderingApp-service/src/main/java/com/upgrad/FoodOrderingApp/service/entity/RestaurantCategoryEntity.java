@@ -10,6 +10,7 @@ public class RestaurantCategoryEntity {
     private RestaurantEntity restaurantByRestaurantId;
     private int restaurantId;
     private int categoryId;
+    @OrderBy("CategoryName ASC")
     private CategoryEntity categoryByCategoryId;
 
     @Id
