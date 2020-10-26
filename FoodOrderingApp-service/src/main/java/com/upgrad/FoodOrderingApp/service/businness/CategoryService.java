@@ -21,10 +21,10 @@ public class CategoryService {
     }
 
     /**
-     * Get a list of all Category entities by Id
+     * Get a list of all Category entities by UUID
      */
-    public CategoryEntity getCategoryById(Integer categoryId) throws CategoryNotFoundException {
-        CategoryEntity category = categoryDao.getCategoryById(categoryId);
+    public CategoryEntity getCategoryByUuid(String categoryUuid) throws CategoryNotFoundException {
+        CategoryEntity category = categoryDao.getCategoryByUuid(categoryUuid);
         if (category == null) {
             throw new CategoryNotFoundException("CNF-002", "No category by this id");
         }

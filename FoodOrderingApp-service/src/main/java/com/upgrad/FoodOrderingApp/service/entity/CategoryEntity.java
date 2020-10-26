@@ -11,8 +11,8 @@ import java.util.Objects;
                 name = "getAllCategory",
                 query = "select c from CategoryEntity c order by c.categoryName asc"),
         @NamedQuery(
-                name = "getCategoryById",
-                query = "select c from CategoryEntity c where c.id = :categoryId")
+                name = "getCategoryByUuid",
+                query = "select c from CategoryEntity c where c.uuid = :categoryUuid")
 })
 public class CategoryEntity {
     private int id;

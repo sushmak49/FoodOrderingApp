@@ -6,6 +6,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "item", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "itemByUUID", query = "select q from ItemEntity q where q.uuid = :uuid")
+})
 public class ItemEntity {
     private int id;
     private String uuid;

@@ -54,10 +54,10 @@ public class RestaurantDao {
      * parameter : Integer restaurantId
      * returns :  restaurantEntity
      */
-    public RestaurantEntity getRestaurantById(Integer restaurantId) {
+    public RestaurantEntity getRestaurantByUuid(String restaurantUuid) {
         try {
-            return entityManager.createNamedQuery("getRestaurantById", RestaurantEntity.class)
-                    .setParameter("restaurantId", restaurantId)
+            return entityManager.createNamedQuery("getRestaurantByUuid", RestaurantEntity.class)
+                    .setParameter("restaurantUuid", restaurantUuid)
                     .getSingleResult();
         } catch (NoResultException nre) {
             nre.printStackTrace();

@@ -18,8 +18,8 @@ import java.util.Objects;
                 name = "getRestaurantByCategoryId",
                 query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId order by r.restaurantName asc"),
         @NamedQuery(
-                name = "getRestaurantById",
-                query = "select r from RestaurantEntity r where r.id = :restaurantId order by r.restaurantName asc")
+                name = "getRestaurantByUuid",
+                query = "select r from RestaurantEntity r where r.uuid= :restaurantUuid order by r.restaurantName asc")
 })
 public class RestaurantEntity {
     private int id;

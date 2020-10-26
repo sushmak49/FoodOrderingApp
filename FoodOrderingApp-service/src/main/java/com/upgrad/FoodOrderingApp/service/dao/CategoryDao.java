@@ -24,12 +24,12 @@ public class CategoryDao {
     }
 
     /**
-     * A method to fetch category by id
+     * A method to fetch category by UUID
      */
-    public CategoryEntity getCategoryById(Integer categoryId) {
+    public CategoryEntity getCategoryByUuid(String categoryUuid) {
         try {
-            return entityManager.createNamedQuery("getCategoryById", CategoryEntity.class)
-                    .setParameter("categoryId", categoryId)
+            return entityManager.createNamedQuery("getCategoryByUuid", CategoryEntity.class)
+                    .setParameter("categoryUuid", categoryUuid)
                     .getSingleResult();
         } catch (NoResultException nre) {
             nre.printStackTrace();
