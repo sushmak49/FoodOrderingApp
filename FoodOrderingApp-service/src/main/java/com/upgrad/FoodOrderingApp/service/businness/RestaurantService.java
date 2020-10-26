@@ -43,7 +43,7 @@ public class RestaurantService {
     }
 
     /**
-     * Get a list of all Restaurant entities by Category Id
+     * Get a list of all Restaurant entities by Id
      */
     public RestaurantEntity getRestaurantById(Integer restaurantId) throws RestaurantNotFoundException {
         RestaurantEntity restaurant = restaurantDao.getRestaurantById(restaurantId);
