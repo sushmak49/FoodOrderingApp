@@ -73,8 +73,7 @@ public class CustomerService {
         }
         final String encryptedPassword =
                 PasswordCryptographyProvider.encrypt(password, customerEntity.getSalt());
-        // if the encrypted password doesn't match with the fetched customer password throws
-        // AuthenticationFailedException with code "ATH--002
+
         if (!encryptedPassword.equals(customerEntity.getPassword())) {
             throw new AuthenticationFailedException("ATH-002", "Invalid Credentials");
         }
