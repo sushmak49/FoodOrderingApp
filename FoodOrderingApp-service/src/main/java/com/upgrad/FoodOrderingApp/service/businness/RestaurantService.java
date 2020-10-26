@@ -17,7 +17,7 @@ public class RestaurantService {
     private RestaurantDao restaurantDao;
 
     /**
-     * Get a list of all Restaurant entities
+     * Get a list of all Restaurant entitiesv
      */
     public List<RestaurantEntity> getAllRestaurant() {
         return restaurantDao.getAllRestaurant();
@@ -43,10 +43,10 @@ public class RestaurantService {
     }
 
     /**
-     * Get a list of all Restaurant entities by Category Id
+     * Get a list of all Restaurant entities by UUId
      */
-    public RestaurantEntity getRestaurantById(Integer restaurantId) throws RestaurantNotFoundException {
-        RestaurantEntity restaurant = restaurantDao.getRestaurantById(restaurantId);
+    public RestaurantEntity getRestaurantByUuid(String restaurantUuid) throws RestaurantNotFoundException {
+        RestaurantEntity restaurant = restaurantDao.getRestaurantByUuid(restaurantUuid);
         if(restaurant==null){
             throw new RestaurantNotFoundException("RNF-001","No restaurant by this id");
         }

@@ -6,6 +6,14 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "category", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllCategory",
+                query = "select c from CategoryEntity c order by c.categoryName asc"),
+        @NamedQuery(
+                name = "getCategoryByUuid",
+                query = "select c from CategoryEntity c where c.uuid = :categoryUuid")
+})
 public class CategoryEntity {
     private int id;
     private String uuid;
