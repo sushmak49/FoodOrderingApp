@@ -10,25 +10,28 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class CustomerAuthDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @PersistenceContext private EntityManager entityManager;
 
-    public void createCustomerAuthToken(CustomerAuthEntity customerAuthEntity){
+
+    public void createCustomerAuthToken(CustomerAuthEntity customerAuthEntity) {
         entityManager.persist(customerAuthEntity);
     }
-    public CustomerAuthEntity getCutomerAuthByToken(final String accessToken){
-        try{
-            return entityManager.createNamedQuery("customerAuthByToken",customerAuthToken().class)
-            entityManager.setParameter("accessToken",accessToken)
-            entityManager.getSingleResult();
 
-        } catch(NoResultException nre){
+    /* Obtaining the accesstoken after suceessful login.*/
+
+    public CustomerAuthEntity getCustomerAuthByToken(final String accessToken) {
+        try {
+            return entityManager
+                    .createNamedQuery("customerAuthByToken", CustomerAuthEntity.class)
+                    .setParameter("accessToken", accessToken)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
             return null;
-        }
-        public void updateCustomerAuth(final CustomerAuthEntity updateCustomerAuthEntity){
-            entityManager.merge(updatedCustomerAuthEnity);
         }
     }
 
-}
 
+    public void updateCustomerAuth(final CustomerAuthEntity updatedCustomerAuthEntity) {
+        entityManager.merge(updatedCustomerAuthEntity);
+    }
+}
