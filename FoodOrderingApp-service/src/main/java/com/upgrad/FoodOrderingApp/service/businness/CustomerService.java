@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -29,6 +28,7 @@ public class CustomerService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
+
     public CustomerEntity saveCustomer(CustomerEntity customerEntity)
             throws SignUpRestrictedException {
 
