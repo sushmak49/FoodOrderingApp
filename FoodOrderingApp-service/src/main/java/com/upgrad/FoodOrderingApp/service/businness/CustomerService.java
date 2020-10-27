@@ -1,7 +1,5 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.businness.JwtTokenProvider;
-import com.upgrad.FoodOrderingApp.service.businness.PasswordCryptographyProvider;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -51,6 +50,7 @@ public class CustomerService {
                 throw new SignUpRestrictedException("SGR-004", "Weak password!");
             }
             customerEntity.setUuid(UUID.randomUUID().toString());
+            // encrypts salt and password
             String[] encryptedText = passwordCryptographyProvider.encrypt(customerEntity.getPassword());
             customerEntity.setSalt(encryptedText[0]);
             customerEntity.setPassword(encryptedText[1]);
@@ -61,13 +61,19 @@ public class CustomerService {
         }
     }
 
-
+    /**
+     * This method implements the logic for 'login' endpoint.
+     *
+     * @param username customers contactnumber will be the username.
+     * @param password customers password.
+     * @return CustomerAuthEntity object.
+     * @throws AuthenticationFailedException if any of the validation fails.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity authenticate(String username, String password)
             throws AuthenticationFailedException {
         CustomerEntity customerEntity = customerDao.getCustomerByContactNumber(username);
-
-        if (customerEntity == null) {
+    if (customerEntity == null) {
             throw new AuthenticationFailedException(
                     "ATH-001", "This contact number has not been registered!");
         }
@@ -107,7 +113,6 @@ public class CustomerService {
     public CustomerEntity updateCustomer(final CustomerEntity customerEntity) {
         return customerDao.updateCustomer(customerEntity);
     }
-
 
 
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
@@ -152,12 +157,9 @@ public class CustomerService {
     private boolean isContactNumberInUse(final String contactNumber) {
         return customerDao.getCustomerByContactNumber(contactNumber) != null;
     }
-
     private boolean isValidEmail(final String emailAddress) {
         EmailValidator validator = EmailValidator.getInstance();
-
-        if (validator.isValid(emailAddress)) return true;
-        else return false;
+        return validator.isValid(emailAddress);
     }
 
     private boolean isValidContactNumber(final String contactNumber) {
