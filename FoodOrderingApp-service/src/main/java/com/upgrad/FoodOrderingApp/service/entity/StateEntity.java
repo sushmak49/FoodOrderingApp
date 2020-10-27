@@ -1,29 +1,56 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "state", schema = "public", catalog = "restaurantdb")
-public class StateEntity {
-    private int id;
-    private String uuid;
-    private String stateName;
-    private Collection<AddressEntity> addressesById;
+@Table(name = "state")
+@NamedQueries({
+        @NamedQuery(
+                name = "getStateByUuid",
+                query = "select s from StateEntity s where s.uuid=:stateUuid"),
+        @NamedQuery(name = "getAllStates", query = "select s from StateEntity s")
+})
+public class StateEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @Size(max = 200)
+    @NotNull
+    @Column(name = "uuid", unique = true)
+    private String uuid;
+
+    @Size(max = 30)
+    @Column(name = "state_name")
+    private String stateName;
+
+    public StateEntity() {}
+
+    public StateEntity(
+            @NotNull @Size(max = 200) String uuid, @NotNull @Size(max = 30) String stateName) {
+        this.uuid = uuid;
+        this.stateName = stateName;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -32,8 +59,6 @@ public class StateEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "state_name", nullable = true, length = 30)
     public String getStateName() {
         return stateName;
     }
@@ -43,26 +68,17 @@ public class StateEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        StateEntity that = (StateEntity) o;
-        return id == that.id &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(stateName, that.stateName);
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, stateName);
+        return new HashCodeBuilder().append(this).hashCode();
     }
 
-    @OneToMany(mappedBy = "stateByStateId")
-    public Collection<AddressEntity> getAddressesById() {
-        return addressesById;
-    }
-
-    public void setAddressesById(Collection<AddressEntity> addressesById) {
-        this.addressesById = addressesById;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

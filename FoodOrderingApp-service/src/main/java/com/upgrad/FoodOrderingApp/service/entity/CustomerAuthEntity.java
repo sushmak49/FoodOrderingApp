@@ -1,33 +1,73 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "customer_auth", schema = "public", catalog = "restaurantdb")
-public class CustomerAuthEntity {
-    private int id;
-    private String uuid;
-    private int customerId;
-    private String accessToken;
-    private Timestamp loginAt;
-    private Timestamp logoutAt;
-    private Timestamp expiresAt;
-    private CustomerEntity customerByCustomerId;
+@Table(name = "customer_auth")
+@NamedQueries({
+        @NamedQuery(
+                name = "customerAuthByToken",
+                query = "select c from CustomerAuthEntity c where c.accessToken=:accessToken")
+})
+public class CustomerAuthEntity<CustomerEntity> implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Size(max = 200)
+    @NotNull
+    @Column(name = "uuid")
+    private String uuid;
+
+    @ManyToOne
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
+    @Size(max = 500)
+    @Column(name = "access_token")
+    private String accessToken;
+
+    @Column(name = "login_at")
+    private ZonedDateTime loginAt;
+
+    @Column(name = "logout_at")
+    private ZonedDateTime logoutAt;
+
+    @Column(name = "expires_at")
+    private ZonedDateTime expiresAt;
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customerEntity) {
+        this.customer = customerEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -36,18 +76,6 @@ public class CustomerAuthEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "customer_id", nullable = false)
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    @Basic
-    @Column(name = "access_token", nullable = true, length = 500)
     public String getAccessToken() {
         return accessToken;
     }
@@ -56,62 +84,42 @@ public class CustomerAuthEntity {
         this.accessToken = accessToken;
     }
 
-    @Basic
-    @Column(name = "login_at", nullable = true)
-    public Timestamp getLoginAt() {
+    public ZonedDateTime getLoginAt() {
         return loginAt;
     }
 
-    public void setLoginAt(Timestamp loginAt) {
+    public void setLoginAt(ZonedDateTime loginAt) {
         this.loginAt = loginAt;
     }
 
-    @Basic
-    @Column(name = "logout_at", nullable = true)
-    public Timestamp getLogoutAt() {
+    public ZonedDateTime getLogoutAt() {
         return logoutAt;
     }
 
-    public void setLogoutAt(Timestamp logoutAt) {
+    public void setLogoutAt(ZonedDateTime logoutAt) {
         this.logoutAt = logoutAt;
     }
 
-    @Basic
-    @Column(name = "expires_at", nullable = true)
-    public Timestamp getExpiresAt() {
+    public ZonedDateTime getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(Timestamp expiresAt) {
+    public void setExpiresAt(ZonedDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CustomerAuthEntity that = (CustomerAuthEntity) o;
-        return id == that.id &&
-                customerId == that.customerId &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(accessToken, that.accessToken) &&
-                Objects.equals(loginAt, that.loginAt) &&
-                Objects.equals(logoutAt, that.logoutAt) &&
-                Objects.equals(expiresAt, that.expiresAt);
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, customerId, accessToken, loginAt, logoutAt, expiresAt);
+        return new HashCodeBuilder().append(this).hashCode();
     }
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
-    public CustomerEntity getCustomerByCustomerId() {
-        return customerByCustomerId;
-    }
-
-    public void setCustomerByCustomerId(CustomerEntity customerByCustomerId) {
-        this.customerByCustomerId = customerByCustomerId;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
