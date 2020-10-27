@@ -61,14 +61,7 @@ public class CustomerService {
         }
     }
 
-    /**
-     * This method implements the logic for 'login' endpoint.
-     *
-     * @param username customers contactnumber will be the username.
-     * @param password customers password.
-     * @return CustomerAuthEntity object.
-     * @throws AuthenticationFailedException if any of the validation fails.
-     */
+
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity authenticate(String username, String password)
             throws AuthenticationFailedException {
