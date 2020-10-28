@@ -14,11 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sun.text.normalizer.Utility;
+//import sun.text.normalizer.Utility;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -49,7 +50,7 @@ public class CustomerController {
                 new SignupCustomerResponse()
                         .id(createdCustomerEntity.getUuid())
                         .status("CUSTOMER SUCCESSFULLY REGISTERED");
-        return new ResponseEntity<SignupCustomerResponse>(customerResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(customerResponse, HttpStatus.CREATED);
     }
 
     //Login
@@ -81,6 +82,7 @@ public class CustomerController {
                 customerService.authenticate(contactNumber, password);
 
         LoginResponse loginResponse = new LoginResponse();
+        //
         loginResponse.setId(createdCustomerAuthEntity.getCustomer().getUuid());
         loginResponse.setFirstName(createdCustomerAuthEntity.getCustomer().getFirstName());
         loginResponse.setLastName(createdCustomerAuthEntity.getCustomer().getLastName());
@@ -97,24 +99,24 @@ public class CustomerController {
         return new ResponseEntity<LoginResponse>(loginResponse, headers, HttpStatus.OK);
     }
 
-
+    //Logout Controller
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.POST,
             path = "/customer/logout",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<LogoutResponse> logout(
-            @RequestHeader("authorization") final String authorization)
+    public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String authorizationToken)
             throws AuthorizationFailedException {
-        final String accessToken = Utility.getTokenFromAuthorization(authorization);
-        CustomerAuthEntity createdCustomerAuthEntity = customerService.logout(accessToken);
+       // final String accessToken = Utility.getTokenFromAuthorization(authorization);
+        CustomerAuthEntity customerAuthEntity = customerService.logout(authorizationToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse()
-                        .id(createdCustomerAuthEntity.getCustomer().getUuid())
+                        .id(customerAuthEntity.getCustomer().getUuid())
                         .message("LOGGED OUT SUCCESSFULLY");
         return new ResponseEntity<LogoutResponse>(logoutResponse, HttpStatus.OK);
     }
 
+    //Update Customer Controller
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.PUT,
@@ -130,9 +132,7 @@ public class CustomerController {
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
 
-        String accessToken = Utility.getTokenFromAuthorization(authorization);
-
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+        CustomerEntity customerEntity = customerService.getCustomer(authorization);
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
         customerEntity.setLastName(updateCustomerRequest.getLastName());
 
@@ -147,26 +147,28 @@ public class CustomerController {
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
     }
 
-   @CrossOrigin
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            path = "/customer/password",
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdatePasswordResponse> changePassword(
-            @RequestHeader("authorization") final String authorization,
-            @RequestBody(required = true) final UpdatePasswordRequest updatePasswordRequest)
-            throws UpdateCustomerException, AuthorizationFailedException {
+    //Change Password Controller
+     @CrossOrigin
+      @RequestMapping(
+              method = RequestMethod.PUT,
+              path = "/customer/password",
+              produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+              consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      public ResponseEntity<UpdatePasswordResponse> changePassword(
+              @RequestHeader("authorization") final String authorization,
+              @RequestBody(required = true) final UpdatePasswordRequest updatePasswordRequest)
+              throws UpdateCustomerException, AuthorizationFailedException {
 
-        String oldPassword = updatePasswordRequest.getOldPassword();
-        String newPassword = updatePasswordRequest.getNewPassword();
+          String oldPassword = updatePasswordRequest.getOldPassword();
+          String newPassword = updatePasswordRequest.getNewPassword();
 
-        if (oldPassword != null
-                && !oldPassword.isEmpty()
-                && newPassword != null
-                && !newPassword.isEmpty()) {
-            String accessToken = Utility.getTokenFromAuthorization(authorization);
-            CustomerEntity customerEntity = customerService.getCustomer(accessToken);
+          if (oldPassword != null
+                  && !oldPassword.isEmpty()
+                  && newPassword != null
+                  && !newPassword.isEmpty()) {
+
+              CustomerEntity customerEntity = customerService.getCustomer(authorization);
+
 
             CustomerEntity updatedCustomerEntity =
                     customerService.updateCustomerPassword(oldPassword, newPassword, customerEntity);
