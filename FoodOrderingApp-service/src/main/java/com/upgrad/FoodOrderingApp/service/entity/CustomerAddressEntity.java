@@ -1,79 +1,81 @@
 package com.upgrad.FoodOrderingApp.service.entity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+
+import java.io.Serializable;
 
 @Entity
-@Table(name = "customer_address", schema = "public", catalog = "restaurantdb")
-public class CustomerAddressEntity {
-    private int id;
-    private int customerId;
-    private int addressId;
-    private CustomerEntity customerByCustomerId;
-    private AddressEntity addressByAddressId;
+@Table(name = "customer_address")
+@NamedQueries({
+        @NamedQuery(
+                name = "customerAddressByCustomer",
+                query = "select ca FROM CustomerAddressEntity ca where ca.customer = :customer"),
+        @NamedQuery(
+                name = "customerAddressByAddress",
+                query = "select ca from CustomerAddressEntity ca where ca.address = :address")
+})
+public class CustomerAddressEntity<CustomerEntity> implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
+    @ManyToOne
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "address_id")
+    private AddressEntity address;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "customer_id", nullable = false)
-    public int getCustomerId() {
-        return customerId;
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
-    @Basic
-    @Column(name = "address_id", nullable = false)
-    public int getAddressId() {
-        return addressId;
+    public AddressEntity getAddress() {
+        return address;
     }
 
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CustomerAddressEntity that = (CustomerAddressEntity) o;
-        return id == that.id &&
-                customerId == that.customerId &&
-                addressId == that.addressId;
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, addressId);
+        return new HashCodeBuilder().append(this).hashCode();
     }
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
-    public CustomerEntity getCustomerByCustomerId() {
-        return customerByCustomerId;
-    }
-
-    public void setCustomerByCustomerId(CustomerEntity customerByCustomerId) {
-        this.customerByCustomerId = customerByCustomerId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
-    public AddressEntity getAddressByAddressId() {
-        return addressByAddressId;
-    }
-
-    public void setAddressByAddressId(AddressEntity addressByAddressId) {
-        this.addressByAddressId = addressByAddressId;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
