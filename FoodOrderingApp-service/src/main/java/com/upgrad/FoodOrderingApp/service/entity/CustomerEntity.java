@@ -1,3 +1,5 @@
+package com.upgrad.FoodOrderingApp.service.entity;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,7 +19,7 @@ import java.util.List;
                 name = "customerByContactNumber",
                 query = "select c from CustomerEntity c where c.contactNumber=:contactNumber")
 })
-public class CustomerEntity<AddressEntity> implements Serializable {
+public class CustomerEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
