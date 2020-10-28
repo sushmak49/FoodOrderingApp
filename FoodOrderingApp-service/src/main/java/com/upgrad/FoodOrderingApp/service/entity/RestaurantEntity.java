@@ -26,8 +26,8 @@ public class RestaurantEntity {
     private String restaurantName;
     private String photoUrl;
     private Double customerRating;
-    private int averagePriceForTwo;
-    private int numberOfCustomersRated;
+    private int avgPrice;
+    private int numberCustomersRated;
     private int addressId;
     private Collection<OrdersEntity> ordersById;
     @ManyToOne
@@ -95,22 +95,22 @@ public class RestaurantEntity {
 
     @Basic
     @Column(name = "average_price_for_two", nullable = false)
-    public int getAveragePriceForTwo() {
-        return averagePriceForTwo;
+    public int getAvgPrice() {
+        return avgPrice;
     }
 
-    public void setAveragePriceForTwo(int averagePriceForTwo) {
-        this.averagePriceForTwo = averagePriceForTwo;
+    public void setAvgPrice(int avgPrice) {
+        this.avgPrice = avgPrice;
     }
 
     @Basic
     @Column(name = "number_of_customers_rated", nullable = false)
-    public int getNumberOfCustomersRated() {
-        return numberOfCustomersRated;
+    public int getNumberCustomersRated() {
+        return numberCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(int numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberCustomersRated(int numberCustomersRated) {
+        this.numberCustomersRated = numberCustomersRated;
     }
 
     @Override
@@ -119,8 +119,8 @@ public class RestaurantEntity {
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantEntity that = (RestaurantEntity) o;
         return id == that.id &&
-                averagePriceForTwo == that.averagePriceForTwo &&
-                numberOfCustomersRated == that.numberOfCustomersRated &&
+                avgPrice == that.avgPrice &&
+                numberCustomersRated == that.numberCustomersRated &&
                 Objects.equals(uuid, that.uuid) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
                 Objects.equals(photoUrl, that.photoUrl) &&
@@ -129,7 +129,7 @@ public class RestaurantEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, restaurantName, photoUrl, customerRating, averagePriceForTwo, numberOfCustomersRated);
+        return Objects.hash(id, uuid, restaurantName, photoUrl, customerRating, avgPrice, numberCustomersRated);
     }
 
     @Basic

@@ -27,14 +27,14 @@ public class RestaurantService {
     /**
      * Get a list of all Restaurant entities by rating desc
      */
-    public List<RestaurantEntity> getAllRestaurantByRating() {
+    public List<RestaurantEntity> restaurantsByRating() {
         return restaurantDao.getAllRestaurantByRating();
     }
 
     /**
      * Get a list of all Restaurant entities by name
      */
-    public List<RestaurantEntity> getRestaurantByName(String restaurantName) throws RestaurantNotFoundException {
+    public List<RestaurantEntity> restaurantsByName(String restaurantName) throws RestaurantNotFoundException {
         if (restaurantName.isEmpty()) {
             throw new RestaurantNotFoundException("RNF-003", "Restaurant name field should not be empty");
         }
@@ -52,7 +52,7 @@ public class RestaurantService {
     /**
      * Get a list of all Restaurant entities by Category Id
      */
-    public List<RestaurantEntity> getRestaurantByCategoryId(final String categoryId) throws CategoryNotFoundException {
+    public List<RestaurantEntity> restaurantByCategory(final String categoryId) throws CategoryNotFoundException {
 
         if (categoryId.equals("")) {
             throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
@@ -70,7 +70,7 @@ public class RestaurantService {
     /**
      * Get a list of all Restaurant entities by UUId
      */
-    public RestaurantEntity getRestaurantByUuid(String restaurantUuid) throws RestaurantNotFoundException {
+    public RestaurantEntity restaurantByUUID(String restaurantUuid) throws RestaurantNotFoundException {
         if (restaurantUuid.equals("")) {
         throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
     }
@@ -101,9 +101,9 @@ public class RestaurantService {
         //Re-calculating average rating including the new rating
         //Also updating number of customers ratings
         Double newAverageRating = (
-                ((restaurantEntity.getNumberOfCustomersRated()*restaurantEntity.getCustomerRating())+newRating)/
-                        (restaurantEntity.getNumberOfCustomersRated()+1));
-        restaurantEntity.setNumberOfCustomersRated(restaurantEntity.getNumberOfCustomersRated() + 1);
+                ((restaurantEntity.getNumberCustomersRated()*restaurantEntity.getCustomerRating())+newRating)/
+                        (restaurantEntity.getNumberCustomersRated()+1));
+        restaurantEntity.setNumberCustomersRated(restaurantEntity.getNumberCustomersRated() + 1);
 
         restaurantEntity.setCustomerRating(newAverageRating);
         return restaurantDao.updateRestaurantEntity(restaurantEntity);

@@ -42,7 +42,7 @@ public class RestaurantController {
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getAllRestaurants() {
-        List<RestaurantEntity> restaurantEntityList = restaurantService.getAllRestaurantByRating();
+        List<RestaurantEntity> restaurantEntityList = restaurantService.restaurantsByRating();
         RestaurantListResponse restaurantListResponse = new RestaurantListResponse();
         for (RestaurantEntity restaurantEntity : restaurantEntityList) {
             RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
@@ -67,8 +67,8 @@ public class RestaurantController {
                     .restaurantName(restaurantEntity.getRestaurantName())
                     .photoURL(restaurantEntity.getPhotoUrl())
                     .customerRating(new BigDecimal(temp3))
-                    .averagePrice(restaurantEntity.getAveragePriceForTwo())
-                    .numberCustomersRated(restaurantEntity.getNumberOfCustomersRated())
+                    .averagePrice(restaurantEntity.getAvgPrice())
+                    .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
                     .address(restaurantDetailsResponseAddress)
                     .categories(categoriesString);
             restaurantListResponse.addRestaurantsItem(restaurantList);
@@ -84,7 +84,7 @@ public class RestaurantController {
     public ResponseEntity<RestaurantListResponse> getRestaurantsByName(
             @PathVariable("restaurant_name") final String restaurantName)
             throws RestaurantNotFoundException {
-        List<RestaurantEntity> restaurantEntityList = restaurantService.getRestaurantByName(restaurantName);
+        List<RestaurantEntity> restaurantEntityList = restaurantService.restaurantsByName(restaurantName);
 
         RestaurantListResponse restaurantListResponse = new RestaurantListResponse();
 
@@ -115,8 +115,8 @@ public class RestaurantController {
                     .restaurantName(restaurantEntity.getRestaurantName())
                     .photoURL(restaurantEntity.getPhotoUrl())
                     .customerRating(new BigDecimal(temp2))
-                    .averagePrice(restaurantEntity.getAveragePriceForTwo())
-                    .numberCustomersRated(restaurantEntity.getNumberOfCustomersRated())
+                    .averagePrice(restaurantEntity.getAvgPrice())
+                    .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
                     .address(restaurantDetailsResponseAddress)
                     .categories(categoriesString);
             restaurantListResponse.addRestaurantsItem(restaurantList);
@@ -131,7 +131,7 @@ public class RestaurantController {
     public ResponseEntity<RestaurantListResponse> getRestaurantsByCategoryId(
             @PathVariable("category_id") final String categoryId)
             throws CategoryNotFoundException {
-        List<RestaurantEntity> restaurantEntityList = restaurantService.getRestaurantByCategoryId(categoryId);
+        List<RestaurantEntity> restaurantEntityList = restaurantService.restaurantByCategory(categoryId);
 
         RestaurantListResponse restaurantListResponse = new RestaurantListResponse();
 
@@ -158,8 +158,8 @@ public class RestaurantController {
                     .restaurantName(restaurantEntity.getRestaurantName())
                     .photoURL(restaurantEntity.getPhotoUrl())
                     .customerRating(new BigDecimal(temp1))
-                    .averagePrice(restaurantEntity.getAveragePriceForTwo())
-                    .numberCustomersRated(restaurantEntity.getNumberOfCustomersRated())
+                    .averagePrice(restaurantEntity.getAvgPrice())
+                    .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
                     .address(restaurantDetailsResponseAddress)
                     .categories(categoriesString);
             restaurantListResponse.addRestaurantsItem(restaurantList);
@@ -175,7 +175,7 @@ public class RestaurantController {
             @PathVariable("restaurant_id") final String restaurantId)
             throws RestaurantNotFoundException {
 
-        RestaurantEntity restaurantEntity = restaurantService.getRestaurantByUuid(restaurantId);
+        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
 
         RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
                 .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid()))
@@ -194,8 +194,8 @@ public class RestaurantController {
                 .restaurantName(restaurantEntity.getRestaurantName())
                 .photoURL(restaurantEntity.getPhotoUrl())
                 .customerRating(new BigDecimal(temp))
-                .averagePrice(restaurantEntity.getAveragePriceForTwo())
-                .numberCustomersRated(restaurantEntity.getNumberOfCustomersRated())
+                .averagePrice(restaurantEntity.getAvgPrice())
+                .numberCustomersRated(restaurantEntity.getNumberCustomersRated())
                 .address(restaurantDetailsResponseAddress);
 
         for (CategoryEntity categoryEntity : categoryService.getCategoriesByRestaurant(restaurantId)) {
@@ -237,7 +237,7 @@ public class RestaurantController {
             customerEntity = customerService.getCustomer(bearerToken[1]);
         }
 
-        RestaurantEntity restaurantEntity = restaurantService.getRestaurantByUuid(restaurantId);
+        RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
         restaurantService.updateRestaurantRating(restaurantEntity, customerRating);
 
         RestaurantUpdatedResponse restaurantUpdatedResponse = new RestaurantUpdatedResponse()
