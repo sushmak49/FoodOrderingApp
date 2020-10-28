@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
                 name = "customerAuthByToken",
                 query = "select c from CustomerAuthEntity c where c.accessToken=:accessToken")
 })
-public class CustomerAuthEntity<CustomerEntity> implements Serializable {
+public class CustomerAuthEntity implements Serializable {
 
     @Id
     @Column(name = "id")
