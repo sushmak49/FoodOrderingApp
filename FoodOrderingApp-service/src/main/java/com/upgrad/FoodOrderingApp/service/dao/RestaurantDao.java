@@ -16,11 +16,25 @@ public class RestaurantDao {
     /**
      * A method to fetch list of all restaurants
      */
-    public List<RestaurantEntity> getAllRestaurant() {
-        List<RestaurantEntity> restaurantList = entityManager.createNamedQuery("getAllRestaurant", RestaurantEntity.class).getResultList();
-        return restaurantList;
+    public List<RestaurantEntity> getAllRestaurantByRating() {
+        try {
+        return entityManager.createNamedQuery("getAllRestaurantByRating", RestaurantEntity.class).getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
     }
 
+    /**
+     * Return restaurant list sorted based on customer rating
+     */
+
+    public List<RestaurantEntity> getRestaurantsByRating() {
+        try {
+            return entityManager.createNamedQuery("getAllRestaurantByRating", RestaurantEntity.class).getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
     /**
      * A method to get restaurant by name
      * parameter : String restaurantName
@@ -38,20 +52,8 @@ public class RestaurantDao {
     }
 
     /**
-     * A method to fetch list of all restaurants by category
-     * parameter : Integer categoryId
-     * returns : List restaurantEntity
-     */
-    public List<RestaurantEntity> getRestaurantByCategoryId(Integer categoryId) {
-        List<RestaurantEntity> restaurantList = entityManager.createNamedQuery("getRestaurantByCategoryId", RestaurantEntity.class)
-                .setParameter("categoryId", categoryId)
-                .getResultList();
-        return restaurantList;
-    }
-
-    /**
      * A method to get restaurant by id
-     * parameter : Integer restaurantId
+     * parameter : String restaurantUUID
      * returns :  restaurantEntity
      */
     public RestaurantEntity getRestaurantByUuid(String restaurantUuid) {
@@ -68,8 +70,7 @@ public class RestaurantDao {
     /**
      * Method to update/Persist Restaurant details
      */
-    public RestaurantEntity updateRestaurant(RestaurantEntity restaurantEntity) {
-        entityManager.persist(restaurantEntity);
-        return restaurantEntity;
+    public RestaurantEntity updateRestaurantEntity(RestaurantEntity restaurantEntity) {
+        return entityManager.merge(restaurantEntity);
     }
 }
