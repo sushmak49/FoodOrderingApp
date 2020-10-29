@@ -55,7 +55,7 @@ public class AddressService {
             throw new SaveAddressException("SAR-001", "No field can be empty");
         }
     }
-    //getall address//
+    //get all address//
     public List<AddressEntity> getAllAddress(final CustomerEntity customerEntity) {
         List<AddressEntity> addressEntityList = new ArrayList<>();
         List<CustomerAddressEntity> customerAddressEntityList =
@@ -88,6 +88,7 @@ public class AddressService {
     public List<StateEntity> getAllStates() {
         return stateDao.getAllStates();
     }
+
     //UUID does not exists in the database
 public StateEntity getStateByUUID(final String stateUuid) throws AddressNotFoundException {
     if (stateDao.getStateByUUID(stateUuid) == null) {

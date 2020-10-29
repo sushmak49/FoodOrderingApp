@@ -1,10 +1,6 @@
-//package com.upgrad.FoodOrderingApp.api.controller;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.upgrad.FoodOrderingApp.api.model.AddressList;
-//import com.upgrad.FoodOrderingApp.api.model.AddressListResponse;
+package com.upgrad.FoodOrderingApp.api.controller;
+
 //import com.upgrad.FoodOrderingApp.api.model.StatesList;
-//import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
 //import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 //import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 //import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
@@ -34,7 +30,7 @@
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
-//// This class contains all the test cases regarding the address controller
+//This class contains all the test cases regarding the address controller
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
 //@AutoConfigureMockMvc
@@ -75,8 +71,8 @@
 //    }
 //
 //    //This test case passes when you have handled the exception of trying to save an address with non existing access-token.
-//    @Test
-//    public void shouldNotSaveAddressWithNonExistingAccessToken() throws Exception {
+  //  @Test
+//   public void shouldNotSaveAddressWithNonExistingAccessToken() throws Exception {
 //        when(mockCustomerService.getCustomer("non_existing_access_token"))
 //                .thenThrow(new AuthorizationFailedException("ATHR-001", "Customer is not Logged in."));
 //

@@ -1,9 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,6 +37,7 @@ public class CustomerEntity implements Serializable {
     @Column(name = "lastname")
     private String lastName;
 
+    @NotNull
     @Size(max = 50)
     @Column(name = "email")
     private String emailAddress;
@@ -49,11 +47,13 @@ public class CustomerEntity implements Serializable {
     @Column(name = "contact_number", unique = true)
     private String contactNumber;
 
+    @ToStringExclude
     @NotNull
     @Size(max = 255)
     @Column(name = "password")
     private String password;
 
+    @ToStringExclude
     @NotNull
     @Size(max = 255)
     @Column(name = "salt")
