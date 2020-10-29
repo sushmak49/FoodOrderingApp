@@ -1,36 +1,79 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import com.upgrad.FoodOrderingApp.service.common.ItemType;
+
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
-@Table(name = "item", schema = "public", catalog = "restaurantdb")
+@Table(name = "item")
 @NamedQueries({
         @NamedQuery(name = "itemByUUID", query = "select q from ItemEntity q where q.uuid = :uuid")
 })
-public class ItemEntity {
-    private int id;
-    private String uuid;
-    private String itemName;
-    private int price;
-    private String type;
-    private Collection<CategoryItemEntity> categoryItemsById;
-    private Collection<OrderItemEntity> orderItemsById;
-    private Collection<RestaurantItemEntity> restaurantItemsById;
+public class ItemEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "item_name")
+    @NotNull
+    @Size(max = 30)
+    private String itemName;
+
+    @Column(name = "price")
+    @NotNull
+    private Integer price;
+
+    @Column(name = "type")
+    @NotNull
+    @Size(max = 10)
+    private ItemType type;
+
+    @ManyToMany
+    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
+    }
+
+    public List<RestaurantEntity> getRestaurants() {
+        return restaurants;
+    }
+
+    public void setRestaurants(List<RestaurantEntity> restaurants) {
+        this.restaurants = restaurants;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -39,8 +82,6 @@ public class ItemEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "item_name", nullable = false, length = 30)
     public String getItemName() {
         return itemName;
     }
@@ -49,67 +90,19 @@ public class ItemEntity {
         this.itemName = itemName;
     }
 
-    @Basic
-    @Column(name = "price", nullable = false)
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
-    @Basic
-    @Column(name = "type", nullable = false, length = 10)
-    public String getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ItemType type) {
         this.type = type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemEntity that = (ItemEntity) o;
-        return id == that.id &&
-                price == that.price &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(itemName, that.itemName) &&
-                Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, uuid, itemName, price, type);
-    }
-
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<CategoryItemEntity> getCategoryItemsById() {
-        return categoryItemsById;
-    }
-
-    public void setCategoryItemsById(Collection<CategoryItemEntity> categoryItemsById) {
-        this.categoryItemsById = categoryItemsById;
-    }
-
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<OrderItemEntity> getOrderItemsById() {
-        return orderItemsById;
-    }
-
-    public void setOrderItemsById(Collection<OrderItemEntity> orderItemsById) {
-        this.orderItemsById = orderItemsById;
-    }
-
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<RestaurantItemEntity> getRestaurantItemsById() {
-        return restaurantItemsById;
-    }
-
-    public void setRestaurantItemsById(Collection<RestaurantItemEntity> restaurantItemsById) {
-        this.restaurantItemsById = restaurantItemsById;
     }
 }

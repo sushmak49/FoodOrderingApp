@@ -1,22 +1,21 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
         @NamedQuery(
-                name = "getAllRestaurant",
+                name = "getAllRestaurantByRating",
                 query = "select r from RestaurantEntity r order by r.customerRating desc"),
         @NamedQuery(
                 name = "getRestaurantByName",
                 query = "select r from RestaurantEntity r where lower(r.restaurantName) like lower(:restaurantName) order by r.restaurantName asc"),
-        @NamedQuery(
-                name = "getRestaurantByCategoryId",
-                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId order by r.restaurantName asc"),
         @NamedQuery(
                 name = "getRestaurantByUuid",
                 query = "select r from RestaurantEntity r where r.uuid= :restaurantUuid order by r.restaurantName asc")
@@ -26,14 +25,22 @@ public class RestaurantEntity {
     private String uuid;
     private String restaurantName;
     private String photoUrl;
-    private BigInteger customerRating;
-    private int averagePriceForTwo;
-    private int numberOfCustomersRated;
+    private Double customerRating;
+    private int avgPrice;
+    private int numberCustomersRated;
     private int addressId;
     private Collection<OrdersEntity> ordersById;
-    private AddressEntity addressByAddressId;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    @NotNull
+    private AddressEntity address;
     private Collection<RestaurantCategoryEntity> restaurantCategoriesById;
     private Collection<RestaurantItemEntity> restaurantItemsById;
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
 
     @Id
     @Column(name = "id", nullable = false)
@@ -77,32 +84,33 @@ public class RestaurantEntity {
 
     @Basic
     @Column(name = "customer_rating", nullable = false, precision = 0)
-    public BigInteger getCustomerRating() {
+    @NotNull
+    public Double getCustomerRating() {
         return customerRating;
     }
 
-    public void setCustomerRating(BigInteger customerRating) {
+    public void setCustomerRating(Double customerRating) {
         this.customerRating = customerRating;
     }
 
     @Basic
     @Column(name = "average_price_for_two", nullable = false)
-    public int getAveragePriceForTwo() {
-        return averagePriceForTwo;
+    public int getAvgPrice() {
+        return avgPrice;
     }
 
-    public void setAveragePriceForTwo(int averagePriceForTwo) {
-        this.averagePriceForTwo = averagePriceForTwo;
+    public void setAvgPrice(int avgPrice) {
+        this.avgPrice = avgPrice;
     }
 
     @Basic
     @Column(name = "number_of_customers_rated", nullable = false)
-    public int getNumberOfCustomersRated() {
-        return numberOfCustomersRated;
+    public int getNumberCustomersRated() {
+        return numberCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(int numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberCustomersRated(int numberCustomersRated) {
+        this.numberCustomersRated = numberCustomersRated;
     }
 
     @Override
@@ -111,8 +119,8 @@ public class RestaurantEntity {
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantEntity that = (RestaurantEntity) o;
         return id == that.id &&
-                averagePriceForTwo == that.averagePriceForTwo &&
-                numberOfCustomersRated == that.numberOfCustomersRated &&
+                avgPrice == that.avgPrice &&
+                numberCustomersRated == that.numberCustomersRated &&
                 Objects.equals(uuid, that.uuid) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
                 Objects.equals(photoUrl, that.photoUrl) &&
@@ -121,7 +129,7 @@ public class RestaurantEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, restaurantName, photoUrl, customerRating, averagePriceForTwo, numberOfCustomersRated);
+        return Objects.hash(id, uuid, restaurantName, photoUrl, customerRating, avgPrice, numberCustomersRated);
     }
 
     @Basic
@@ -143,14 +151,12 @@ public class RestaurantEntity {
         this.ordersById = ordersById;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
-    public AddressEntity getAddressByAddressId() {
-        return addressByAddressId;
+    public AddressEntity getAddress() {
+        return address;
     }
 
-    public void setAddressByAddressId(AddressEntity addressByAddressId) {
-        this.addressByAddressId = addressByAddressId;
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
     @OneToMany(mappedBy = "restaurantByRestaurantId")
@@ -169,5 +175,26 @@ public class RestaurantEntity {
 
     public void setRestaurantItemsById(Collection<RestaurantItemEntity> restaurantItemsById) {
         this.restaurantItemsById = restaurantItemsById;
+    }
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
+    }
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<ItemEntity> items = new ArrayList<>();
+
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
     }
 }
