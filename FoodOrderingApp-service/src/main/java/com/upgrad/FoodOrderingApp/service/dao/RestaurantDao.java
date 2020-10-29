@@ -25,33 +25,6 @@ public class RestaurantDao {
     }
 
     /**
-     * Return restaurant list sorted based on customer rating
-     */
-
-    public List<RestaurantEntity> getRestaurantsByRating() {
-        try {
-            return entityManager.createNamedQuery("getAllRestaurantByRating", RestaurantEntity.class).getResultList();
-        } catch (NoResultException nre) {
-            return null;
-        }
-    }
-    /**
-     * A method to get restaurant by name
-     * parameter : String restaurantName
-     * returns : restaurantEntity
-     */
-    public RestaurantEntity getRestaurantByName(String restaurantName) {
-        try {
-            return entityManager.createNamedQuery("getRestaurantByName", RestaurantEntity.class)
-                    .setParameter("restaurantName", "%" + restaurantName + "%")
-                    .getSingleResult();
-        } catch (NoResultException nre) {
-            nre.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * A method to get restaurant by id
      * parameter : String restaurantUUID
      * returns :  restaurantEntity

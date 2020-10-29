@@ -23,12 +23,15 @@ public class CategoryService {
     /**
      * Get a list of all Category entities
      */
-    public List<CategoryEntity> getAllCategory() {
+    public List<CategoryEntity> getAllCategoriesOrderedByName() {
         return categoryDao.getAllCategory();
     }
 
     /**
      * Get a list of all Category entities by UUID
+     * @param categoryUuid
+     * @return
+     * @throws CategoryNotFoundException
      */
     public CategoryEntity getCategoryByUuid(String categoryUuid) throws CategoryNotFoundException {
         CategoryEntity category = categoryDao.getCategoryByUuid(categoryUuid);

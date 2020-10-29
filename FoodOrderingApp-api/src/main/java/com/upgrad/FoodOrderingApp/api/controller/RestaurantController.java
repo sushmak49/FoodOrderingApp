@@ -85,13 +85,10 @@ public class RestaurantController {
             @PathVariable("restaurant_name") final String restaurantName)
             throws RestaurantNotFoundException {
         List<RestaurantEntity> restaurantEntityList = restaurantService.restaurantsByName(restaurantName);
-
         RestaurantListResponse restaurantListResponse = new RestaurantListResponse();
-
         if (restaurantEntityList.isEmpty()) {
             return new ResponseEntity<RestaurantListResponse>(restaurantListResponse, HttpStatus.OK);
         }
-
         for (RestaurantEntity restaurantEntity : restaurantEntityList) {
             RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
                     .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid()))

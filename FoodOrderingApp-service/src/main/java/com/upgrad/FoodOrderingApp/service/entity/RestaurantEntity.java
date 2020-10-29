@@ -176,6 +176,7 @@ public class RestaurantEntity {
     public void setRestaurantItemsById(Collection<RestaurantItemEntity> restaurantItemsById) {
         this.restaurantItemsById = restaurantItemsById;
     }
+
     public List<CategoryEntity> getCategories() {
         return categories;
     }
@@ -188,6 +189,7 @@ public class RestaurantEntity {
     @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "restaurant_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<ItemEntity> items = new ArrayList<>();
+
     public List<ItemEntity> getItems() {
         return items;
     }
