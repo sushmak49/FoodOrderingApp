@@ -108,6 +108,9 @@ public class AddressController {
 
         return new ResponseEntity<AddressListResponse>(addressListResponse, HttpStatus.OK);
     }
+    //Delete address
+
+
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,

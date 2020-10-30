@@ -66,6 +66,10 @@ public class AddressService {
         }
         return addressEntityList;
     }
+    //Delete address has to be added,{ Deletes given address from database if no orders placed using the given address.
+    //   *}
+
+
     //getaddress by UUID
     public AddressEntity getAddressByUUID(final String addressId, final CustomerEntity customerEntity)
             throws AuthorizationFailedException, AddressNotFoundException {
