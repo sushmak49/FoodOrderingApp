@@ -1,43 +1,91 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
 
 @Entity
-@Table(name = "orders", schema = "public", catalog = "restaurantdb")
-public class OrdersEntity {
-    private int id;
-    private String uuid;
-    private BigInteger bill;
-    private Integer couponId;
-    private BigInteger discount;
-    private Timestamp date;
-    private Integer paymentId;
-    private int customerId;
-    private int addressId;
-    private int restaurantId;
-    private Collection<OrderItemEntity> orderItemsById;
-    private CouponEntity couponByCouponId;
-    private PaymentEntity paymentByPaymentId;
-    private CustomerEntity customerByCustomerId;
-    private AddressEntity addressByAddressId;
-    private RestaurantEntity restaurantByRestaurantId;
+@Table(name = "orders")
+@NamedQueries({
+        @NamedQuery(name = "ordersByAddress", query = "select o from OrdersEntity o where o.address = :address"),
+        @NamedQuery(name = "ordersByCustomer", query = "select o from OrdersEntity o where o.customer = :customer order by o.date desc "),
+        @NamedQuery(name = "ordersByRestaurant", query = "select o from OrdersEntity o where o.restaurant = :restaurant"),
+})
+public class OrdersEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "bill")
+    @NotNull
+    private BigDecimal bill;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    // @NotNull
+    private CouponEntity coupon;
+
+    @Column(name = "discount")
+    @NotNull
+    private BigDecimal discount;
+
+    @Column(name = "date")
+    @NotNull
+    private Date date;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    @NotNull
+    private PaymentEntity payment;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @NotNull
+    private CustomerEntity customer;
+
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    @NotNull
+    private AddressEntity address;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    @NotNull
+    private RestaurantEntity restaurant;
+
+    public OrdersEntity() {
+    }
+
+    public OrdersEntity(@NotNull @Size(max = 200) String uuid, @NotNull Double bill, CouponEntity coupon, @NotNull Double discount, @NotNull Date date, @NotNull PaymentEntity payment, @NotNull CustomerEntity customer, @NotNull AddressEntity address, RestaurantEntity restaurant) {
+        this.uuid = uuid;
+        this.bill = new BigDecimal(bill);
+        this.coupon = coupon;
+        this.discount = new BigDecimal(discount);
+        this.date = date;
+        this.payment = payment;
+        this.customer = customer;
+        this.address = address;
+        this.restaurant = restaurant;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -46,164 +94,68 @@ public class OrdersEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "bill", nullable = false, precision = 0)
-    public BigInteger getBill() {
-        return bill;
+    public Double getBill() {
+        return bill.doubleValue();
     }
 
-    public void setBill(BigInteger bill) {
-        this.bill = bill;
+    public void setBill(Double bill) {
+        this.bill = new BigDecimal(bill);
     }
 
-    @Basic
-    @Column(name = "coupon_id", nullable = true)
-    public Integer getCouponId() {
-        return couponId;
+    public CouponEntity getCoupon() {
+        return coupon;
     }
 
-    public void setCouponId(Integer couponId) {
-        this.couponId = couponId;
+    public void setCoupon(CouponEntity coupon) {
+        this.coupon = coupon;
     }
 
-    @Basic
-    @Column(name = "discount", nullable = true, precision = 0)
-    public BigInteger getDiscount() {
-        return discount;
+    public Double getDiscount() {
+        return discount.doubleValue();
     }
 
-    public void setDiscount(BigInteger discount) {
-        this.discount = discount;
+    public void setDiscount(Double discount) {
+        this.discount = new BigDecimal(discount);
     }
 
-    @Basic
-    @Column(name = "date", nullable = false)
-    public Timestamp getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    @Basic
-    @Column(name = "payment_id", nullable = true)
-    public Integer getPaymentId() {
-        return paymentId;
+    public PaymentEntity getPayment() {
+        return payment;
     }
 
-    public void setPaymentId(Integer paymentId) {
-        this.paymentId = paymentId;
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
     }
 
-    @Basic
-    @Column(name = "customer_id", nullable = false)
-    public int getCustomerId() {
-        return customerId;
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
-    @Basic
-    @Column(name = "address_id", nullable = false)
-    public int getAddressId() {
-        return addressId;
+    public AddressEntity getAddress() {
+        return address;
     }
 
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
-    @Basic
-    @Column(name = "restaurant_id", nullable = false)
-    public int getRestaurantId() {
-        return restaurantId;
+    public RestaurantEntity getRestaurant() {
+        return restaurant;
     }
 
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrdersEntity that = (OrdersEntity) o;
-        return id == that.id &&
-                customerId == that.customerId &&
-                addressId == that.addressId &&
-                restaurantId == that.restaurantId &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(bill, that.bill) &&
-                Objects.equals(couponId, that.couponId) &&
-                Objects.equals(discount, that.discount) &&
-                Objects.equals(date, that.date) &&
-                Objects.equals(paymentId, that.paymentId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, uuid, bill, couponId, discount, date, paymentId, customerId, addressId, restaurantId);
-    }
-
-    @OneToMany(mappedBy = "ordersByOrderId")
-    public Collection<OrderItemEntity> getOrderItemsById() {
-        return orderItemsById;
-    }
-
-    public void setOrderItemsById(Collection<OrderItemEntity> orderItemsById) {
-        this.orderItemsById = orderItemsById;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "coupon_id", referencedColumnName = "id")
-    public CouponEntity getCouponByCouponId() {
-        return couponByCouponId;
-    }
-
-    public void setCouponByCouponId(CouponEntity couponByCouponId) {
-        this.couponByCouponId = couponByCouponId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "payment_id", referencedColumnName = "id")
-    public PaymentEntity getPaymentByPaymentId() {
-        return paymentByPaymentId;
-    }
-
-    public void setPaymentByPaymentId(PaymentEntity paymentByPaymentId) {
-        this.paymentByPaymentId = paymentByPaymentId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
-    public CustomerEntity getCustomerByCustomerId() {
-        return customerByCustomerId;
-    }
-
-    public void setCustomerByCustomerId(CustomerEntity customerByCustomerId) {
-        this.customerByCustomerId = customerByCustomerId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
-    public AddressEntity getAddressByAddressId() {
-        return addressByAddressId;
-    }
-
-    public void setAddressByAddressId(AddressEntity addressByAddressId) {
-        this.addressByAddressId = addressByAddressId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
-    public RestaurantEntity getRestaurantByRestaurantId() {
-        return restaurantByRestaurantId;
-    }
-
-    public void setRestaurantByRestaurantId(RestaurantEntity restaurantByRestaurantId) {
-        this.restaurantByRestaurantId = restaurantByRestaurantId;
+    public void setRestaurant(RestaurantEntity restaurant) {
+        this.restaurant = restaurant;
     }
 }
+

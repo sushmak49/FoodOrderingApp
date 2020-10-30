@@ -17,14 +17,17 @@ public class CategoryDao {
 
     /**
      * A method to fetch list of all category
+     * @return
      */
     public List<CategoryEntity> getAllCategory() {
-        List<CategoryEntity> categoryEntityList = entityManager.createNamedQuery("getAllRestaurant", CategoryEntity.class).getResultList();
+        List<CategoryEntity> categoryEntityList = entityManager.createNamedQuery("getAllCategory", CategoryEntity.class).getResultList();
         return categoryEntityList;
     }
 
     /**
      * A method to fetch category by UUID
+     * @param categoryUuid
+     * @return
      */
     public CategoryEntity getCategoryByUuid(String categoryUuid) {
         try {
