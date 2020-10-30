@@ -1,19 +1,30 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.HashCodeExclude;
+import org.apache.commons.lang3.builder.ToStringExclude;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "category_item", schema = "public", catalog = "restaurantdb")
 public class CategoryItemEntity {
+    @Id
+    @Column(name = "id")
+    @ToStringExclude
+    @HashCodeExclude
+    @GeneratedValue(generator = "categoryItemIdGenerator")
+    @SequenceGenerator(
+            name = "categoryItemIdGenerator",
+            sequenceName = "restaurant_id_seq",
+            initialValue = 1,
+            allocationSize = 1)
     private int id;
     private int itemId;
     private int categoryId;
     private ItemEntity itemByItemId;
     private CategoryEntity categoryByCategoryId;
 
-    @Id
-    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }

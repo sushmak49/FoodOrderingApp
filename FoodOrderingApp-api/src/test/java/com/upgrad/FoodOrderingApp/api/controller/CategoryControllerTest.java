@@ -21,6 +21,7 @@
 //import java.util.UUID;
 //
 //import static com.upgrad.FoodOrderingApp.service.common.ItemType.NON_VEG;
+//import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertNull;
 //import static org.mockito.Mockito.*;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,7 +41,7 @@
 //    private CategoryService mockCategoryService;
 //
 //    //This test case passes when you have are able to fetch any category by its id.
-//    @Test
+//    @Test//passed
 //    public void shouldGetCategoryById() throws Exception {
 //        final ItemEntity itemEntity = new ItemEntity();
 //        itemEntity.setItemName("myItem");
@@ -74,7 +75,7 @@
 //
 //    //This test case passes when you have handled the exception of trying to fetch any category but your category id
 //    // field is empty.
-//    @Test
+//    @Test//passed
 //    public void shouldNotGetCategoryByidIfCategoryIdIsEmpty() throws Exception {
 //        when(mockCategoryService.getCategoryById(anyString()))
 //                .thenThrow(new CategoryNotFoundException("CNF-001", "Category id field should not be empty"));
@@ -88,7 +89,7 @@
 //
 //    //This test case passes when you have handled the exception of trying to fetch any category by its id, while there
 //    // is not category by that id in the database
-//    @Test
+//    @Test//passed
 //    public void shouldNotGetCategoryByIdIfCategoryDoesNotExistAgainstGivenId() throws Exception {
 //        when(mockCategoryService.getCategoryById("someCategory"))
 //                .thenThrow(new CategoryNotFoundException("CNF-002", "No category by this id"));
@@ -101,7 +102,7 @@
 //    }
 //
 //    //This test case passes when you are able to fetch the list of all categories ordered by their name.
-//    @Test
+//    @Test//passed
 //    public void shouldGetAllCategoryOrderedByName() throws Exception {
 //        final CategoryEntity categoryEntity = new CategoryEntity();
 //        final String categoryEntityId = UUID.randomUUID().toString();
@@ -123,7 +124,7 @@
 //        verify(mockCategoryService, times(1)).getAllCategoriesOrderedByName();
 //    }
 //
-//    @Test
+//    @Test//passed
 //    public void shouldNotGetAnyCategoryOrderedByNameIfItDoesNotExists() throws Exception {
 //        when(mockCategoryService.getAllCategoriesOrderedByName()).thenReturn(Collections.emptyList());
 //

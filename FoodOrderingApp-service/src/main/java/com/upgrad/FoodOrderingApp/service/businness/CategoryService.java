@@ -29,11 +29,15 @@ public class CategoryService {
 
     /**
      * Get a list of all Category entities by UUID
+     *
      * @param categoryUuid
      * @return
      * @throws CategoryNotFoundException
      */
-    public CategoryEntity getCategoryByUuid(String categoryUuid) throws CategoryNotFoundException {
+    public CategoryEntity getCategoryById(String categoryUuid) throws CategoryNotFoundException {
+        if (categoryUuid == null || categoryUuid.equals("")) {
+            throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
+        }
         CategoryEntity category = categoryDao.getCategoryByUuid(categoryUuid);
         if (category == null) {
             throw new CategoryNotFoundException("CNF-002", "No category by this id");
@@ -41,7 +45,9 @@ public class CategoryService {
         return category;
     }
 
-    /** List all categories mapped to a restaurant - list by restaurant UUID
+    /**
+     * List all categories mapped to a restaurant - list by restaurant UUID
+     *
      * @param restaurantUUID
      * @return
      */
