@@ -1,9 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import java.time.ZonedDateTime;
 
 @Entity
@@ -23,42 +22,46 @@ import java.time.ZonedDateTime;
 })
 public class CustomerAuthEntity implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Size(max = 200)
-    @NotNull
-    @Column(name = "uuid")
-    private String uuid;
-
-    @ManyToOne
-    @NotNull
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
-
-    @Size(max = 500)
-    @Column(name = "access_token")
-    private String accessToken;
-
     @Column(name = "login_at")
-    private ZonedDateTime loginAt;
+    ZonedDateTime loginAt;
 
     @Column(name = "logout_at")
-    private ZonedDateTime logoutAt;
+    ZonedDateTime logoutAt;
 
     @Column(name = "expires_at")
-    private ZonedDateTime expiresAt;
+    ZonedDateTime expiresAt;
 
-    public CustomerEntity getCustomer() {
-        return customer;
-    }
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(generator = "customerAuthIdGenerator")
+    @SequenceGenerator(
+            name = "customerAuthIdGenerator",
+            sequenceName = "customer_auth_id_seq",
+            initialValue = 1,
+            allocationSize = 1)
+    @ToStringExclude
+    @HashCodeExclude
+    private Integer id;
 
-    public void setCustomer(CustomerEntity customerEntity) {
-        this.customer = customerEntity;
-    }
+    @Column(name = "uuid")
+    @Size(max = 200)
+    @NotNull
+    private String uuid;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToStringExclude
+    @HashCodeExclude
+    @EqualsExclude
+    private CustomerEntity customer;
+
+    @Column(name = "access_token")
+    @Size(max = 500)
+    @ToStringExclude
+    @HashCodeExclude
+    private String accessToken;
 
     public Integer getId() {
         return id;
@@ -74,6 +77,14 @@ public class CustomerAuthEntity implements Serializable {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public String getAccessToken() {
@@ -110,12 +121,12 @@ public class CustomerAuthEntity implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
     @Override

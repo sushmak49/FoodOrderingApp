@@ -19,52 +19,72 @@ import java.util.List;
 public class CustomerEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "customerIdGenerator")
+    @SequenceGenerator(
+            name = "customerIdGenerator",
+            sequenceName = "customer_id_seq",
+            initialValue = 1,
+            allocationSize = 1)
     @Column(name = "id")
+    @ToStringExclude
+    @HashCodeExclude
     private Integer id;
 
-    @NotNull
+    @Column(name = "uuid")
     @Size(max = 200)
-    @Column(name = "uuid", unique = true)
+    @NotNull
     private String uuid;
 
+    @Column(name = "firstname")
     @NotNull
     @Size(max = 30)
-    @Column(name = "firstname")
     private String firstName;
 
-    @Size(max = 30)
     @Column(name = "lastname")
+    @Size(max = 30)
     private String lastName;
 
-    @NotNull
-    @Size(max = 50)
     @Column(name = "email")
-    private String emailAddress;
+    @Size(max = 50)
+    private String email;
 
-    @NotNull
+    @Column(name = "contact_number")
     @Size(max = 30)
-    @Column(name = "contact_number", unique = true)
+    @NotNull
     private String contactNumber;
 
-    @ToStringExclude
-    @NotNull
-    @Size(max = 255)
     @Column(name = "password")
+    @Size(max = 255)
+    @NotNull
+    @ToStringExclude
+    @HashCodeExclude
     private String password;
 
-    @ToStringExclude
-    @NotNull
-    @Size(max = 255)
     @Column(name = "salt")
+    @Size(max = 255)
+    @NotNull
+    @ToStringExclude
+    @HashCodeExclude
     private String salt;
 
-    @OneToMany
-    @JoinTable(
-            name = "customer_address",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<AddressEntity> addresses = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    private List<AddressEntity> addresses;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -83,11 +103,11 @@ public class CustomerEntity implements Serializable {
     }
 
     public String getEmailAddress() {
-        return emailAddress;
+        return email;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setEmailAddress(String email) {
+        this.email = email;
     }
 
     public String getContactNumber() {
@@ -104,22 +124,6 @@ public class CustomerEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public String getSalt() {
@@ -140,12 +144,12 @@ public class CustomerEntity implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
     @Override

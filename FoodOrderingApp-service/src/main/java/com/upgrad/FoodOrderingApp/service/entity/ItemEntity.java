@@ -1,36 +1,81 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "item", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
         @NamedQuery(name = "itemByUUID", query = "select q from ItemEntity q where q.uuid = :uuid")
 })
-public class ItemEntity {
-    private int id;
-    private String uuid;
-    private String itemName;
-    private int price;
-    private String type;
-    private Collection<CategoryItemEntity> categoryItemsById;
-    private Collection<OrderItemEntity> orderItemsById;
-    private Collection<RestaurantItemEntity> restaurantItemsById;
+public class ItemEntity implements Serializable {
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToStringExclude
+    @HashCodeExclude
+    @EqualsExclude
+    Set<OrderItemEntity> orders = new HashSet<OrderItemEntity>();
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(generator = "itemIdGenerator")
+    @SequenceGenerator(
+            name = "itemIdGenerator",
+            sequenceName = "item_id_seq",
+            initialValue = 1,
+            allocationSize = 1)
+    @ToStringExclude
+    @HashCodeExclude
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "item_name")
+    @NotNull
+    @Size(max = 30)
+    private String itemName;
+
+    @Column(name = "price")
+    @NotNull
+    private Integer price;
+
+    @Column(name = "type")
+    @Size(max = 10)
+    @NotNull
+    private String type;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "category_item",
+            joinColumns = {@JoinColumn(name = "item_id")},
+            inverseJoinColumns = {@JoinColumn(name = "category_id")})
+    @ToStringExclude
+    @HashCodeExclude
+    @EqualsExclude
+    private Set<CategoryEntity> categories = new HashSet<CategoryEntity>();
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -39,8 +84,6 @@ public class ItemEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "item_name", nullable = false, length = 30)
     public String getItemName() {
         return itemName;
     }
@@ -49,18 +92,14 @@ public class ItemEntity {
         this.itemName = itemName;
     }
 
-    @Basic
-    @Column(name = "price", nullable = false)
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
-    @Basic
-    @Column(name = "type", nullable = false, length = 10)
     public String getType() {
         return type;
     }
@@ -69,47 +108,34 @@ public class ItemEntity {
         this.type = type;
     }
 
+    public Set<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryEntity> categories) {
+        this.categories = categories;
+    }
+
+    public Set<OrderItemEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<OrderItemEntity> orders) {
+        this.orders = orders;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemEntity that = (ItemEntity) o;
-        return id == that.id &&
-                price == that.price &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(itemName, that.itemName) &&
-                Objects.equals(type, that.type);
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, itemName, price, type);
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<CategoryItemEntity> getCategoryItemsById() {
-        return categoryItemsById;
-    }
-
-    public void setCategoryItemsById(Collection<CategoryItemEntity> categoryItemsById) {
-        this.categoryItemsById = categoryItemsById;
-    }
-
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<OrderItemEntity> getOrderItemsById() {
-        return orderItemsById;
-    }
-
-    public void setOrderItemsById(Collection<OrderItemEntity> orderItemsById) {
-        this.orderItemsById = orderItemsById;
-    }
-
-    @OneToMany(mappedBy = "itemByItemId")
-    public Collection<RestaurantItemEntity> getRestaurantItemsById() {
-        return restaurantItemsById;
-    }
-
-    public void setRestaurantItemsById(Collection<RestaurantItemEntity> restaurantItemsById) {
-        this.restaurantItemsById = restaurantItemsById;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

@@ -1,18 +1,13 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 
-import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
+import org.apache.commons.lang3.builder.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "address")
@@ -21,16 +16,22 @@ import java.io.Serializable;
                 name = "addressByUUID",
                 query = "select a from AddressEntity a where a.uuid=:addressUUID")
 })
-public class AddressEntity implements Serializable {
-
+public class AddressEntity implements Serializable, Comparable<AddressEntity> {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "addressIdGenerator")
+    @SequenceGenerator(
+            name = "addressIdGenerator",
+            sequenceName = "address_id_seq",
+            initialValue = 1,
+            allocationSize = 1)
+    @ToStringExclude
+    @HashCodeExclude
     private Integer id;
 
-    @Column(name = "uuid", unique = true)
-    @Size(max = 200)
+    @Column(name = "uuid")
     @NotNull
+    @Size(max = 200)
     private String uuid;
 
     @Column(name = "flat_buil_number")
@@ -45,26 +46,33 @@ public class AddressEntity implements Serializable {
     @Size(max = 30)
     private String city;
 
-    @Size(max = 30)
     @Column(name = "pincode")
+    @Size(max = 30)
     private String pincode;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "state_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id", referencedColumnName = "id")
     private StateEntity state;
 
     @Column(name = "active")
     private Integer active;
 
-    public AddressEntity() {}
+    @ManyToOne
+    @JoinTable(
+            name = "customer_address",
+            joinColumns = {@JoinColumn(name = "address_id")},
+            inverseJoinColumns = {@JoinColumn(name = "customer_id")})
+    private CustomerEntity customer;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private List<OrdersEntity> orders = new ArrayList<>();
 
     public AddressEntity(
-            @Size(max = 200) @NotNull String uuid,
-            @Size(max = 255) String flatBuilNo,
-            @Size(max = 255) String locality,
-            @Size(max = 30) String city,
-            @Size(max = 30) String pincode,
+            String uuid,
+            String flatBuilNo,
+            String locality,
+            String city,
+            String pincode,
             StateEntity state) {
         this.uuid = uuid;
         this.flatBuilNo = flatBuilNo;
@@ -73,6 +81,8 @@ public class AddressEntity implements Serializable {
         this.pincode = pincode;
         this.state = state;
     }
+
+    public AddressEntity() {}
 
     public Integer getId() {
         return id;
@@ -138,14 +148,35 @@ public class AddressEntity implements Serializable {
         this.active = active;
     }
 
+    public CustomerEntity getCustomers() {
+        return customer;
+    }
+
+    public void setCustomers(CustomerEntity customer) {
+        this.customer = customer;
+    }
+
+    public List<OrdersEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrdersEntity> orders) {
+        this.orders = orders;
+    }
+
+    @Override
+    public int compareTo(AddressEntity i) {
+        return this.getId().compareTo(i.getId());
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
     @Override
