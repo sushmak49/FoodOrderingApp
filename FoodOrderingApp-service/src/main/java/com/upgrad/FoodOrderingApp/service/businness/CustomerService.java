@@ -1,9 +1,8 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
-import com.upgrad.FoodOrderingApp.service.businness.JwtTokenProvider;
-import com.upgrad.FoodOrderingApp.service.businness.PasswordCryptographyProvider;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
@@ -15,9 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -27,7 +30,6 @@ public class CustomerService {
     @Autowired private PasswordCryptographyProvider passwordCryptographyProvider;
 
     @Autowired private CustomerAuthDao customerAuthDao;
-
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity saveCustomer(CustomerEntity customerEntity)
@@ -51,6 +53,7 @@ public class CustomerService {
                 throw new SignUpRestrictedException("SGR-004", "Weak password!");
             }
             customerEntity.setUuid(UUID.randomUUID().toString());
+            // encrypts salt and password
             String[] encryptedText = passwordCryptographyProvider.encrypt(customerEntity.getPassword());
             customerEntity.setSalt(encryptedText[0]);
             customerEntity.setPassword(encryptedText[1]);
@@ -66,7 +69,6 @@ public class CustomerService {
     public CustomerAuthEntity authenticate(String username, String password)
             throws AuthenticationFailedException {
         CustomerEntity customerEntity = customerDao.getCustomerByContactNumber(username);
-
         if (customerEntity == null) {
             throw new AuthenticationFailedException(
                     "ATH-001", "This contact number has not been registered!");
@@ -93,7 +95,9 @@ public class CustomerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity logout(final String accessToken) throws AuthorizationFailedException {
+    public CustomerAuthEntity logout(
+            final String accessToken)
+            throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByToken(accessToken);
         CustomerEntity customerEntity = getCustomer(accessToken);
         customerAuthEntity.setCustomer(customerEntity);
@@ -109,24 +113,22 @@ public class CustomerService {
     }
 
 
-
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByToken(accessToken);
         if (customerAuthEntity != null) {
-
             if (customerAuthEntity.getLogoutAt() != null) {
                 throw new AuthorizationFailedException(
                         "ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
             }
-
             if (ZonedDateTime.now().isAfter(customerAuthEntity.getExpiresAt())) {
                 throw new AuthorizationFailedException(
                         "ATHR-003", "Your session is expired. Log in again to access this endpoint.");
             }
-            return (CustomerEntity) customerAuthEntity.getCustomer();
+                return (CustomerEntity) customerAuthEntity.getCustomer();
         } else {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
         }
+//        return customerAuthEntity.getCustomer();
     }
 
 
@@ -150,15 +152,21 @@ public class CustomerService {
     }
 
     private boolean isContactNumberInUse(final String contactNumber) {
-        return customerDao.getCustomerByContactNumber(contactNumber) != null;
+        return (customerDao.getCustomerByContactNumber(contactNumber) != null);
     }
 
     private boolean isValidEmail(final String emailAddress) {
-        EmailValidator validator = EmailValidator.getInstance();
+        String regex = "[a-zA-Z0-9][a-zA-Z0-9]+@[a-zA-Z0-9][a-zA-Z0-9]+[.][a-zA-Z0-9][a-zA-Z0-9]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(emailAddress);
+        if (matcher.matches()){
+            return true;
+        } else {
 
-        if (validator.isValid(emailAddress)) return true;
-        else return false;
+            return false;
+        }
     }
+
 
     private boolean isValidContactNumber(final String contactNumber) {
         if (contactNumber.length() != 10) {
