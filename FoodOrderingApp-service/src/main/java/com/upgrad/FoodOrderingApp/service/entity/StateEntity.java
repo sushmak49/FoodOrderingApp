@@ -19,14 +19,8 @@ import java.io.Serializable;
 public class StateEntity implements Serializable {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "stateIdGenerator")
-    @SequenceGenerator(
-            name = "stateIdGenerator",
-            sequenceName = "state_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")

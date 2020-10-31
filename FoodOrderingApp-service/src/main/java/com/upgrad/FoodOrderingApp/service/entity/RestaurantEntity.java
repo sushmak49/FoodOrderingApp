@@ -9,10 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -32,23 +29,11 @@ import java.util.Set;
                 query = "select r from RestaurantEntity r where r.uuid= :restaurantUuid order by r.restaurantName asc")
 })
 public class RestaurantEntity implements Serializable {
-    @OneToMany(mappedBy = "restaurantEntity", fetch = FetchType.EAGER)
-    @NotNull
-    @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
-    Set<RestaurantCategoryEntity> restaurantCategoryEntitySet = new HashSet<>();
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "restaurantIdGenerator")
-    @SequenceGenerator(
-            name = "restaurantIdGenerator",
-            sequenceName = "restaurant_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -77,21 +62,25 @@ public class RestaurantEntity implements Serializable {
     @NotNull
     private Integer numberOfCustomersRated;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private AddressEntity address;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "restaurant_item",
             joinColumns = {@JoinColumn(name = "restaurant_id")},
             inverseJoinColumns = {@JoinColumn(name = "item_id")})
-    private Set<ItemEntity> items = new HashSet<ItemEntity>();
+    private List<ItemEntity> items = new ArrayList<>();
+
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -137,7 +126,7 @@ public class RestaurantEntity implements Serializable {
         return averagePriceForTwo;
     }
 
-    public void setAvgPrice(Integer averagePriceForTwo) {
+    public void setAveragePriceForTwo(Integer averagePriceForTwo) {
         this.averagePriceForTwo = averagePriceForTwo;
     }
 
@@ -145,7 +134,7 @@ public class RestaurantEntity implements Serializable {
         return numberOfCustomersRated;
     }
 
-    public void setNumberCustomersRated(Integer numberOfCustomersRated) {
+    public void setNumberOfCustomersRated(Integer numberOfCustomersRated) {
         this.numberOfCustomersRated = numberOfCustomersRated;
     }
 
@@ -157,35 +146,20 @@ public class RestaurantEntity implements Serializable {
         this.address = address;
     }
 
-    public Set<RestaurantCategoryEntity> getRestaurantCategoryEntitySet() {
-        return restaurantCategoryEntitySet;
-    }
-
-    public void setRestaurantCategoryEntitySet(
-            Set<RestaurantCategoryEntity> restaurantCategoryEntitySet) {
-        this.restaurantCategoryEntitySet = restaurantCategoryEntitySet;
-    }
-
-    public Set<ItemEntity> getItems() {
+    public List<ItemEntity> getItems() {
         return items;
     }
 
-    public void setItems(Set<ItemEntity> item) {
-        this.items = item;
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
+    public List<CategoryEntity> getCategories() {
+        return categories;
     }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
 }

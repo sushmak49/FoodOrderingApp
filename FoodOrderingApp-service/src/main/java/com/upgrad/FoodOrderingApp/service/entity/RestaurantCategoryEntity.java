@@ -10,31 +10,26 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant_category", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "getCategoriesByRestaurant", query = "select rc from RestaurantCategoryEntity rc where rc.restaurantEntity.uuid =:restaurantUuid"),
+        @NamedQuery(name = "getRestaurantByCategory", query = "select rc from RestaurantCategoryEntity rc where rc.categoryEntity.uuid =:categoryId")
+
+})
 public class RestaurantCategoryEntity implements Serializable {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "restaurantCategoryIdGenerator")
-    @SequenceGenerator(
-            name = "restaurantCategoryIdGenerator",
-            sequenceName = "restaurant_category_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private int id;
 
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
+    @JoinColumn(name = "restaurant_id")
     private RestaurantEntity restaurantEntity;
 
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "category_id")
     private CategoryEntity categoryEntity;
 
     public int getId() {

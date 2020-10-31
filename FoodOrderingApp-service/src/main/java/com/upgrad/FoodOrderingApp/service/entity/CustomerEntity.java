@@ -19,15 +19,9 @@ import java.util.List;
 public class CustomerEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "customerIdGenerator")
-    @SequenceGenerator(
-            name = "customerIdGenerator",
-            sequenceName = "customer_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -57,18 +51,16 @@ public class CustomerEntity implements Serializable {
     @Size(max = 255)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
     private String password;
 
     @Column(name = "salt")
     @Size(max = 255)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
     private String salt;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
-    private List<AddressEntity> addresses;
+//    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+//    private List<AddressEntity> addresses;
 
     public Integer getId() {
         return id;
@@ -134,13 +126,13 @@ public class CustomerEntity implements Serializable {
         this.salt = salt;
     }
 
-    public List<AddressEntity> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<AddressEntity> addresses) {
-        this.addresses = addresses;
-    }
+//    public List<AddressEntity> getAddresses() {
+//        return addresses;
+//    }
+//
+//    public void setAddresses(List<AddressEntity> addresses) {
+//        this.addresses = addresses;
+//    }
 
     @Override
     public boolean equals(Object obj) {

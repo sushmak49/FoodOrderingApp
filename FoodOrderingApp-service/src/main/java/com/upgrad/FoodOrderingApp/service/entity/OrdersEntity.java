@@ -18,24 +18,22 @@ import java.util.*;
 
 @Entity
 @Table(name = "orders", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "pastOrdersByCustomerUUID", query = "select o from OrdersEntity o where o.customer.uuid = :customerUUID order by o.date desc"),
+        @NamedQuery(name = "getOrdersByCustomers", query = "SELECT o FROM OrdersEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
+        @NamedQuery(name = "getOrdersByRestaurant", query = "SELECT o FROM OrdersEntity o WHERE o.restaurant = :restaurant"),
+        @NamedQuery(name = "getOrdersByAddress", query = "SELECT o FROM OrdersEntity o WHERE o.address = :address")
+})
 public class OrdersEntity implements Serializable {
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
-    Set<OrderItemEntity> items = new HashSet<OrderItemEntity>();
+//    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @ToStringExclude
+//    Set<OrderItemEntity> items = new HashSet<OrderItemEntity>();
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "orderIdGenerator")
-    @SequenceGenerator(
-            name = "orderIdGenerator",
-            sequenceName = "orders_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -47,12 +45,10 @@ public class OrdersEntity implements Serializable {
     @NotNull
     private Double bill;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "coupon_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "coupon_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private CouponEntity coupon;
 
     @Column(name = "discount")
@@ -62,21 +58,17 @@ public class OrdersEntity implements Serializable {
     @NotNull
     private ZonedDateTime date;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "payment_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private PaymentEntity payment;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private CustomerEntity customer;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -84,17 +76,13 @@ public class OrdersEntity implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private AddressEntity address;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private RestaurantEntity restaurant;
 
     public OrdersEntity() {}
@@ -200,13 +188,13 @@ public class OrdersEntity implements Serializable {
         this.restaurant = restaurant;
     }
 
-    public Set<OrderItemEntity> getItems() {
-        return items;
-    }
-
-    public void setItems(Set<OrderItemEntity> items) {
-        this.items = items;
-    }
+//    public Set<OrderItemEntity> getItems() {
+//        return items;
+//    }
+//
+//    public void setItems(Set<OrderItemEntity> items) {
+//        this.items = items;
+//    }
 
     @Override
     public boolean equals(Object obj) {

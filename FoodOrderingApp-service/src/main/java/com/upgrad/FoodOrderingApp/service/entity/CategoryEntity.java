@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -23,14 +24,8 @@ import java.util.Objects;
 public class CategoryEntity implements Serializable, Comparable<CategoryEntity> {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "categoryIdGenerator")
-    @SequenceGenerator(
-            name = "categoryIdGenerator",
-            sequenceName = "category_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -42,8 +37,15 @@ public class CategoryEntity implements Serializable, Comparable<CategoryEntity> 
     @Size(max = 30)
     private String categoryName;
 
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
-    private List<ItemEntity> items;
+    @ManyToMany
+    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<ItemEntity> items = new ArrayList<>();;
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -75,6 +77,14 @@ public class CategoryEntity implements Serializable, Comparable<CategoryEntity> 
 
     public void setItems(List<ItemEntity> items) {
         this.items = items;
+    }
+
+    public List<RestaurantEntity> getRestaurants() {
+        return restaurants;
+    }
+
+    public void setRestaurants(List<RestaurantEntity> restaurants) {
+        this.restaurants = restaurants;
     }
 
     @Override

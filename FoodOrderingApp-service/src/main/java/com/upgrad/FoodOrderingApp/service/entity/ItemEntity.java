@@ -8,10 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "item", schema = "public", catalog = "restaurantdb")
@@ -19,24 +16,17 @@ import java.util.Set;
         @NamedQuery(name = "itemByUUID", query = "select q from ItemEntity q where q.uuid = :uuid")
 })
 public class ItemEntity implements Serializable {
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    @NotNull
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
-    Set<OrderItemEntity> orders = new HashSet<OrderItemEntity>();
+
+//    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+//    @NotNull
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @ToStringExclude
+//    Set<OrderItemEntity> orders = new HashSet<OrderItemEntity>();
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "itemIdGenerator")
-    @SequenceGenerator(
-            name = "itemIdGenerator",
-            sequenceName = "item_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -58,15 +48,19 @@ public class ItemEntity implements Serializable {
     @NotNull
     private String type;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "category_item",
             joinColumns = {@JoinColumn(name = "item_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
     @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
-    private Set<CategoryEntity> categories = new HashSet<CategoryEntity>();
+    private List<CategoryEntity> categories = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    @ToStringExclude
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -108,21 +102,37 @@ public class ItemEntity implements Serializable {
         this.type = type;
     }
 
-    public Set<CategoryEntity> getCategories() {
+    public List<CategoryEntity> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<CategoryEntity> categories) {
+    public void setCategories(List<CategoryEntity> categories) {
         this.categories = categories;
     }
 
-    public Set<OrderItemEntity> getOrders() {
-        return orders;
+    public List<RestaurantEntity> getRestaurants() {
+        return restaurants;
     }
 
-    public void setOrders(Set<OrderItemEntity> orders) {
-        this.orders = orders;
+    public void setRestaurants(List<RestaurantEntity> restaurants) {
+        this.restaurants = restaurants;
     }
+
+//    public Set<CategoryEntity> getCategories() {
+//        return categories;
+//    }
+//
+//    public void setCategories(Set<CategoryEntity> categories) {
+//        this.categories = categories;
+//    }
+//
+//    public Set<OrderItemEntity> getOrders() {
+//        return orders;
+//    }
+//
+//    public void setOrders(Set<OrderItemEntity> orders) {
+//        this.orders = orders;
+//    }
 
     @Override
     public boolean equals(Object obj) {

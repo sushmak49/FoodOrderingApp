@@ -13,21 +13,14 @@ import java.util.UUID;
 @Entity
 @Table(name = "payment", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
-@NamedQuery(
-        name= "getAllPayment",
-        query="select p from PaymentEntity  p")
+        @NamedQuery(name= "getAllPaymentModes", query="select p from PaymentEntity  p"),
+        @NamedQuery(name = "paymentByUUID", query = "select p from PaymentEntity p where p.uuid = :paymentUUID")
 })
 public class PaymentEntity implements Serializable {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "paymentIdGenerator")
-    @SequenceGenerator(
-            name = "paymentIdGenerator",
-            sequenceName = "payment_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")

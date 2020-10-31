@@ -19,14 +19,8 @@ import java.util.UUID;
 public class CouponEntity implements Serializable {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "couponIdGenerator")
-    @SequenceGenerator(
-            name = "couponIdGenerator",
-            sequenceName = "coupon_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")

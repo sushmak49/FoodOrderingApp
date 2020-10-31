@@ -1,6 +1,8 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import org.apache.commons.lang3.builder.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,33 +11,25 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "order_item", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
+        @NamedQuery(name = "itemsByOrderId", query = "select o from OrderItemEntity o where o.order.id = :id")
+})
 public class OrderItemEntity implements Serializable {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "orderItemIdGenerator")
-    @SequenceGenerator(
-            name = "orderItemIdGenerator",
-            sequenceName = "order_item_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private OrdersEntity order;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     @NotNull
-    @ToStringExclude
-    @HashCodeExclude
-    @EqualsExclude
     private ItemEntity item;
 
     @Column(name = "quantity")

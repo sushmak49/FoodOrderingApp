@@ -2,6 +2,9 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 
 import org.apache.commons.lang3.builder.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,14 +22,8 @@ import java.util.List;
 public class AddressEntity implements Serializable, Comparable<AddressEntity> {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "addressIdGenerator")
-    @SequenceGenerator(
-            name = "addressIdGenerator",
-            sequenceName = "address_id_seq",
-            initialValue = 1,
-            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToStringExclude
-    @HashCodeExclude
     private Integer id;
 
     @Column(name = "uuid")
@@ -50,22 +47,23 @@ public class AddressEntity implements Serializable, Comparable<AddressEntity> {
     @Size(max = 30)
     private String pincode;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private StateEntity state;
 
     @Column(name = "active")
     private Integer active;
 
-    @ManyToOne
-    @JoinTable(
-            name = "customer_address",
-            joinColumns = {@JoinColumn(name = "address_id")},
-            inverseJoinColumns = {@JoinColumn(name = "customer_id")})
-    private CustomerEntity customer;
-
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private List<OrdersEntity> orders = new ArrayList<>();
+//    @ManyToOne
+//    @JoinTable(
+//            name = "customer_address",
+//            joinColumns = {@JoinColumn(name = "address_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "customer_id")})
+//    private CustomerEntity customer;
+//
+//    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+//    private List<OrdersEntity> orders = new ArrayList<>();
 
     public AddressEntity(
             String uuid,
@@ -148,21 +146,21 @@ public class AddressEntity implements Serializable, Comparable<AddressEntity> {
         this.active = active;
     }
 
-    public CustomerEntity getCustomers() {
-        return customer;
-    }
-
-    public void setCustomers(CustomerEntity customer) {
-        this.customer = customer;
-    }
-
-    public List<OrdersEntity> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<OrdersEntity> orders) {
-        this.orders = orders;
-    }
+//    public CustomerEntity getCustomers() {
+//        return customer;
+//    }
+//
+//    public void setCustomers(CustomerEntity customer) {
+//        this.customer = customer;
+//    }
+//
+//    public List<OrdersEntity> getOrders() {
+//        return orders;
+//    }
+//
+//    public void setOrders(List<OrdersEntity> orders) {
+//        this.orders = orders;
+//    }
 
     @Override
     public int compareTo(AddressEntity i) {
