@@ -12,7 +12,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "order_item", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
-        @NamedQuery(name = "itemsByOrderId", query = "select o from OrderItemEntity o where o.order.id = :id")
+        @NamedQuery(name = "itemsByOrderId", query = "select o from OrderItemEntity o where o.order.id = :id"),
+        @NamedQuery(name = "itemsByOrder", query = "select q from OrderItemEntity q where q.order = :orderEntity")
 })
 public class OrderItemEntity implements Serializable {
     @Id

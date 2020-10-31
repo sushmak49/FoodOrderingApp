@@ -20,9 +20,9 @@ import java.util.*;
 @Table(name = "orders", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
         @NamedQuery(name = "pastOrdersByCustomerUUID", query = "select o from OrdersEntity o where o.customer.uuid = :customerUUID order by o.date desc"),
-        @NamedQuery(name = "getOrdersByCustomers", query = "SELECT o FROM OrdersEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
-        @NamedQuery(name = "getOrdersByRestaurant", query = "SELECT o FROM OrdersEntity o WHERE o.restaurant = :restaurant"),
-        @NamedQuery(name = "getOrdersByAddress", query = "SELECT o FROM OrdersEntity o WHERE o.address = :address")
+        @NamedQuery(name = "ordersByCustomer", query = "SELECT o FROM OrdersEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
+        @NamedQuery(name = "ordersByRestaurant", query = "SELECT o FROM OrdersEntity o WHERE o.restaurant = :restaurant"),
+        @NamedQuery(name = "ordersByAddress", query = "SELECT o FROM OrdersEntity o WHERE o.address = :address")
 })
 public class OrdersEntity implements Serializable {
 //    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
