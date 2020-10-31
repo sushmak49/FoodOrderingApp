@@ -36,7 +36,7 @@ public class AddressDao {
         return addresses;
     }
 
-    public AddressEntity getAddressByUUID(final String addressUUID) {
+    public AddressEntity getAddressByUuid(final String addressUUID) {
         try {
             return entityManager
                     .createNamedQuery("addressByUUID", AddressEntity.class)

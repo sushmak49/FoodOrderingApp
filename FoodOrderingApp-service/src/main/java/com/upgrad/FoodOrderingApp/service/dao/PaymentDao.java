@@ -14,7 +14,7 @@ public class PaymentDao {
     private EntityManager entityManager;
 
     public List<PaymentEntity> getAllPaymentMethods() {
-        List<PaymentEntity> paymentList = entityManager.createNamedQuery("getAllPayment", PaymentEntity.class).getResultList();
+        List<PaymentEntity> paymentList = entityManager.createNamedQuery("getAllPaymentModes", PaymentEntity.class).getResultList();
         return paymentList;
     }
 
