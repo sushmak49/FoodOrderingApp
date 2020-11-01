@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/")
 public class PaymentController {
@@ -29,16 +30,16 @@ public class PaymentController {
             method = RequestMethod.GET,
             path = "/payment",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<PaymentResponse> getPaymentOptions(){
+    public ResponseEntity<PaymentResponse> getPaymentOptions() {
         List<PaymentEntity> paymentEntityList = paymentService.getAllPaymentMethods();
 
-        final PaymentListResponse paymentListResponses =new PaymentListResponse();
+        final PaymentListResponse paymentListResponses = new PaymentListResponse();
 
-        for(PaymentEntity paymentOption:paymentEntityList){
-            UUID uuid =UUID.fromString(paymentOption.getUuid());
+        for (PaymentEntity paymentOption : paymentEntityList) {
+            String uuid = paymentOption.getUuid();
             String paymentName = paymentOption.getPaymentName();
-            new PaymentResponse().id(uuid).paymentName(paymentName);
-            paymentListResponses.addPaymentMethodsItem(new PaymentResponse().id(uuid).paymentName(paymentName));
+            new PaymentResponse().id(UUID.fromString(uuid)).paymentName(paymentName);
+            paymentListResponses.addPaymentMethodsItem(new PaymentResponse().id(UUID.fromString(uuid)).paymentName(paymentName));
         }
 
         return new ResponseEntity(paymentListResponses, HttpStatus.OK);
