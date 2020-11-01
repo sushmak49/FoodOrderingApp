@@ -21,7 +21,7 @@ import java.io.Serializable;
                 name = "customerAddressByAddress",
                 query = "select ca from CustomerAddressEntity ca where ca.address = :address")
 })
-public class CustomerAddressEntity<CustomerEntity> implements Serializable {
+public class CustomerAddressEntity implements Serializable {
 
     @Id
     @Column(name = "id")

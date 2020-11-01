@@ -14,12 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//import sun.text.normalizer.Utility;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+
+//import sun.text.normalizer.Utility;
 
 @RestController
 @RequestMapping("/")
@@ -27,7 +28,7 @@ public class CustomerController {
 
     @Autowired private CustomerService customerService;
 
-   //Signup Controller
+    //Signup Controller
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.POST,
@@ -107,7 +108,6 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String authorizationToken)
             throws AuthorizationFailedException {
-       // final String accessToken = Utility.getTokenFromAuthorization(authorization);
         CustomerAuthEntity customerAuthEntity = customerService.logout(authorizationToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse()
@@ -162,13 +162,13 @@ public class CustomerController {
           String oldPassword = updatePasswordRequest.getOldPassword();
           String newPassword = updatePasswordRequest.getNewPassword();
 
-          if (oldPassword != null
-                  && !oldPassword.isEmpty()
-                  && newPassword != null
-                  && !newPassword.isEmpty()) {
 
-              CustomerEntity customerEntity = customerService.getCustomer(authorization);
+        if (oldPassword != null
+                && !oldPassword.isEmpty()
+                && newPassword != null
+                && !newPassword.isEmpty()) {
 
+            CustomerEntity customerEntity = customerService.getCustomer(authorization);
 
             CustomerEntity updatedCustomerEntity =
                     customerService.updateCustomerPassword(oldPassword, newPassword, customerEntity);
