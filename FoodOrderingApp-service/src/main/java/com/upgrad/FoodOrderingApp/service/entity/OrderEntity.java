@@ -19,12 +19,12 @@ import java.util.*;
 @Entity
 @Table(name = "orders", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
-        @NamedQuery(name = "pastOrdersByCustomerUUID", query = "select o from OrdersEntity o where o.customer.uuid = :customerUUID order by o.date desc"),
-        @NamedQuery(name = "ordersByCustomer", query = "SELECT o FROM OrdersEntity o WHERE o.customer = :customer ORDER BY o.date DESC "),
-        @NamedQuery(name = "ordersByRestaurant", query = "SELECT o FROM OrdersEntity o WHERE o.restaurant = :restaurant"),
-        @NamedQuery(name = "ordersByAddress", query = "SELECT o FROM OrdersEntity o WHERE o.address = :address")
+        @NamedQuery(name = "pastOrdersByCustomerUUID", query = "select o from OrderEntity o where o.customer.uuid = :customerUUID order by o.date desc"),
+        @NamedQuery(name = "ordersByCustomer", query = "SELECT o FROM OrderEntity o WHERE o.customer = :customerId ORDER BY o.date DESC "),
+        @NamedQuery(name = "ordersByRestaurant", query = "SELECT o FROM OrderEntity o WHERE o.restaurant = :restaurant"),
+        @NamedQuery(name = "ordersByAddress", query = "SELECT o FROM OrderEntity o WHERE o.address = :address")
 })
-public class OrdersEntity implements Serializable {
+public class OrderEntity implements Serializable {
 //    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
 //    @OnDelete(action = OnDeleteAction.CASCADE)
 //    @ToStringExclude
@@ -56,7 +56,7 @@ public class OrdersEntity implements Serializable {
 
     @Column(name = "date")
     @NotNull
-    private ZonedDateTime date;
+    private Date date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "payment_id")
@@ -85,14 +85,14 @@ public class OrdersEntity implements Serializable {
     @ToStringExclude
     private RestaurantEntity restaurant;
 
-    public OrdersEntity() {}
+    public OrderEntity() {}
 
-    public OrdersEntity(
+    public OrderEntity(
             String uuid,
             double bill,
             CouponEntity coupon,
             double discount,
-            ZonedDateTime date,
+            Date date,
             PaymentEntity payment,
             CustomerEntity customer,
             AddressEntity address,
@@ -148,11 +148,11 @@ public class OrdersEntity implements Serializable {
         this.discount = discount;
     }
 
-    public ZonedDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
