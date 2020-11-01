@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 //import sun.text.normalizer.Utility;
 
@@ -107,7 +108,6 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String authorizationToken)
             throws AuthorizationFailedException {
-        // final String accessToken = Utility.getTokenFromAuthorization(authorization);
         CustomerAuthEntity customerAuthEntity = customerService.logout(authorizationToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse()
@@ -148,19 +148,20 @@ public class CustomerController {
     }
 
     //Change Password Controller
-    @CrossOrigin
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            path = "/customer/password",
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UpdatePasswordResponse> changePassword(
-            @RequestHeader("authorization") final String authorization,
-            @RequestBody(required = true) final UpdatePasswordRequest updatePasswordRequest)
-            throws UpdateCustomerException, AuthorizationFailedException {
+     @CrossOrigin
+      @RequestMapping(
+              method = RequestMethod.PUT,
+              path = "/customer/password",
+              produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+              consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+      public ResponseEntity<UpdatePasswordResponse> changePassword(
+              @RequestHeader("authorization") final String authorization,
+              @RequestBody(required = true) final UpdatePasswordRequest updatePasswordRequest)
+              throws UpdateCustomerException, AuthorizationFailedException {
 
-        String oldPassword = updatePasswordRequest.getOldPassword();
-        String newPassword = updatePasswordRequest.getNewPassword();
+          String oldPassword = updatePasswordRequest.getOldPassword();
+          String newPassword = updatePasswordRequest.getNewPassword();
+
 
         if (oldPassword != null
                 && !oldPassword.isEmpty()
@@ -168,7 +169,6 @@ public class CustomerController {
                 && !newPassword.isEmpty()) {
 
             CustomerEntity customerEntity = customerService.getCustomer(authorization);
-
 
             CustomerEntity updatedCustomerEntity =
                     customerService.updateCustomerPassword(oldPassword, newPassword, customerEntity);

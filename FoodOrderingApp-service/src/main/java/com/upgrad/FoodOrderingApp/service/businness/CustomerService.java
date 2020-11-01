@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.businness;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerAuthDao;
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -120,7 +123,7 @@ public class CustomerService {
                 throw new AuthorizationFailedException(
                         "ATHR-003", "Your session is expired. Log in again to access this endpoint.");
             }
-            return (CustomerEntity) customerAuthEntity.getCustomer();
+                return (CustomerEntity) customerAuthEntity.getCustomer();
         } else {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
         }
