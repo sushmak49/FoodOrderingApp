@@ -2,6 +2,7 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
+import com.upgrad.FoodOrderingApp.service.common.Utility;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
@@ -107,8 +108,11 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logout(@RequestHeader("authorization") final String authorizationToken)
             throws AuthorizationFailedException {
-       // final String accessToken = Utility.getTokenFromAuthorization(authorization);
-        CustomerAuthEntity customerAuthEntity = customerService.logout(authorizationToken);
+
+        //Check valid authorization format <Bearer accessToken>
+        String accessToken = Utility.getAccessToken(authorizationToken);
+
+        CustomerAuthEntity customerAuthEntity = customerService.logout(accessToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse()
                         .id(customerAuthEntity.getCustomer().getUuid())
@@ -132,7 +136,10 @@ public class CustomerController {
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
 
-        CustomerEntity customerEntity = customerService.getCustomer(authorization);
+        //Check valid authorization format <Bearer accessToken>
+        String accessToken = Utility.getAccessToken(authorization);
+
+        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
         customerEntity.setLastName(updateCustomerRequest.getLastName());
 
@@ -167,7 +174,10 @@ public class CustomerController {
                   && newPassword != null
                   && !newPassword.isEmpty()) {
 
-              CustomerEntity customerEntity = customerService.getCustomer(authorization);
+              //Check valid authorization format <Bearer accessToken>
+              String accessToken = Utility.getAccessToken(authorization);
+
+              CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
 
             CustomerEntity updatedCustomerEntity =
