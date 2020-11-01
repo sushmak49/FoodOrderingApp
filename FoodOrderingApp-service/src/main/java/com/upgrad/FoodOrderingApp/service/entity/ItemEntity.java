@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+
 import com.upgrad.FoodOrderingApp.service.common.ItemType;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "item")
 @NamedQueries({
-        @NamedQuery(name = "itemByUUID", query = "select q from ItemEntity q where q.uuid = :uuid")
+        @NamedQuery(name = "getItemByUUID", query = "select i from ItemEntity i where i.uuid = :itemUuid")
 })
 public class ItemEntity implements Serializable {
 

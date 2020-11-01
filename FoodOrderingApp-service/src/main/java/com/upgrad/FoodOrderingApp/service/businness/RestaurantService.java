@@ -54,12 +54,10 @@ public class RestaurantService {
      * Get a list of all Restaurant entities by Category Id
      */
     public List<RestaurantEntity> restaurantByCategory(final String categoryId) throws CategoryNotFoundException {
-
         if (categoryId.equals("")) {
             throw new CategoryNotFoundException("CNF-001", "Category id field should not be empty");
         }
         CategoryEntity categoryEntity = categoryDao.getCategoryByUuid(categoryId);
-
         if (categoryEntity == null) {
             throw new CategoryNotFoundException("CNF-002", "No category by this id");
         }
@@ -72,10 +70,10 @@ public class RestaurantService {
      * Get a list of all Restaurant entities by UUId
      */
     public RestaurantEntity restaurantByUUID(String restaurantUuid) throws RestaurantNotFoundException {
-        if (restaurantUuid.equals("")) {
+        if (restaurantUuid.trim().length() == 0 || restaurantUuid.equals("") || restaurantUuid.equals("emptyString")) {
+            System.out.println("restaurantUuid if   " + restaurantUuid);
             throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
         }
-
         RestaurantEntity restaurantEntity = restaurantDao.getRestaurantByUuid(restaurantUuid);
 
         if (restaurantEntity == null) {

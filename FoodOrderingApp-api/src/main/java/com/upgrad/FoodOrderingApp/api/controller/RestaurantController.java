@@ -166,14 +166,19 @@ public class RestaurantController {
     }
 
 
-    //Get restaurant details by restaurant ID
-    @RequestMapping(method = RequestMethod.GET, path = "/api/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /**
+     * Get restaurant details by restaurant ID
+     *
+     * @param restaurantId
+     * @return
+     * @throws RestaurantNotFoundException
+     */
+    @RequestMapping(method = RequestMethod.GET, path = "/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse> getRestaurantById(
             @PathVariable("restaurant_id") final String restaurantId)
             throws RestaurantNotFoundException {
 
         RestaurantEntity restaurantEntity = restaurantService.restaurantByUUID(restaurantId);
-
         RestaurantDetailsResponseAddressState restaurantDetailsResponseAddressState = new RestaurantDetailsResponseAddressState()
                 .id(UUID.fromString(restaurantEntity.getAddress().getState().getUuid()))
                 .stateName(restaurantEntity.getAddress().getState().getStateName());
@@ -212,14 +217,23 @@ public class RestaurantController {
 
             restaurantDetailsResponse.addCategoriesItem(categoryList);
         }
-
         return new ResponseEntity<RestaurantDetailsResponse>(restaurantDetailsResponse, HttpStatus.OK);
     }
 
 
-    //Updating restaurant rating by restaurant UUID
+    /**
+     * Updating restaurant rating by restaurant UUID
+     *
+     * @param customerRating
+     * @param restaurantId
+     * @param authorization
+     * @return
+     * @throws AuthorizationFailedException
+     * @throws RestaurantNotFoundException
+     * @throws InvalidRatingException
+     */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.PUT, path = "/api/restaurant/{restaurant_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.PUT, path = "/restaurant/{restaurant_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantUpdatedResponse> updateRestaurantDetails(
             @RequestParam(name = "customer_rating") final Double customerRating,
             @PathVariable("restaurant_id") final String restaurantId,
