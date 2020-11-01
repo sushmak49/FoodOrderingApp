@@ -4,13 +4,17 @@ import com.upgrad.FoodOrderingApp.service.dao.OrdersDao;
 import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
-import com.upgrad.FoodOrderingApp.service.entity.OrdersEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.CouponNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderService {
@@ -21,40 +25,47 @@ public class OrderService {
     @Autowired
     private CustomerService customerService;
 
-    public CouponEntity shouldGetCouponByName(String couponName, final String accessToken) throws AuthorizationFailedException, CouponNotFoundException {
+    public CouponEntity getCouponByCouponName(String couponName) throws AuthorizationFailedException, CouponNotFoundException {
 
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
-
-        if(couponName!=null){
+        if (couponName != null || !couponName.isEmpty()) {
             CouponEntity couponEntity = orderDao.getCouponByCouponName(couponName);
-            if(couponEntity!=null){
+            if (couponEntity != null) {
                 return couponEntity;
             } else {
-                throw new CouponNotFoundException("CPF-001","No coupon by this name");
+                throw new CouponNotFoundException("CPF-001", "No coupon by this name");
             }
-        } else{
-            throw new CouponNotFoundException("CPF-002","Coupon name field should not be empty");
+        } else {
+            throw new CouponNotFoundException("CPF-002", "Coupon name field should not be empty");
         }
     }
 
-    public List<OrdersEntity> shouldGetPlacedOrderDetails(String accessToken) throws AuthorizationFailedException {
-
-        CustomerEntity customerEntity = customerService.getCustomer(accessToken);
-
-        List<OrdersEntity> OrdersEntityList = orderDao.getOrdersByCustomers(customerEntity);
-
-        return OrdersEntityList;
+    public List<OrderEntity> getOrdersByCustomers(String customerId) throws AuthorizationFailedException {
+        List<OrderEntity> orderEntityList = orderDao.getOrdersByCustomers(customerId);
+        return orderEntityList;
     }
 
-    public CouponEntity getCouponByCouponId(String toString) {
-        CouponEntity couponEntity =null;
+    //Validate coupon id and fetch coupon if available
+    public CouponEntity getCouponByCouponId(String couponId) throws CouponNotFoundException {
+        CouponEntity couponEntity = orderDao.getCouponByCouponUUID(couponId);
+        if (couponEntity == null) {
+            throw new CouponNotFoundException("CPF-002", "No coupon by this id");
+        }
         return couponEntity;
     }
 
-    public OrdersEntity saveOrder(OrdersEntity newOrder) {
+    public OrderEntity saveOrder(OrderEntity newOrder) {
+        newOrder.setUuid(UUID.randomUUID().toString());
+        newOrder.setDate(new Date());
+        // Set the status of address to archive
+        newOrder.getAddress().setActive(0);
+        orderDao.saveOrderDetail(newOrder);
         return newOrder;
+
     }
 
-    public void saveOrderItem(OrderItemEntity orderItemEntity) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
+        orderDao.saveOrderItem(orderItemEntity);
+        return orderItemEntity;
     }
 }

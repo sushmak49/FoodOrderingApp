@@ -60,26 +60,22 @@ public class AddressService {
 //        }
 //        return addressEntityList;
 //    }
-   public AddressEntity getAddressByUuid(final String addressId, final CustomerEntity customerEntity)
+   public AddressEntity getAddressByUUID(final String addressId, final CustomerEntity customerEntity)
        throws AuthorizationFailedException , AddressNotFoundException {
-       AddressEntity addressEntity = addressDao.getAddressByUuid(addressId);
-       CustomerAddressEntity customerAddressEntity = customerAddressDao.customerAddressByAddress(addressEntity);
-       if (!addressId.isEmpty()) {
-           addressEntity = addressDao.getAddressByUuid(addressId);
-           if (addressId.isEmpty()) {
-               throw new AddressNotFoundException("ANF-005", "Address id cannot be empty");
+       if (addressId.isEmpty()) {
+           throw new AddressNotFoundException("ANF-005", "Address id cannot be empty");
+       } else {
+           AddressEntity addressEntity = addressDao.getAddressByUuid(addressId);
+           CustomerAddressEntity customerAddressEntity = customerAddressDao.customerAddressByAddress(addressEntity);
+           if (addressEntity!=null) {
+               if (!customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid())) {
+                   throw new AuthorizationFailedException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
+               }
+           } else {
+               throw new AddressNotFoundException("ANF-003","No address by this id");
            }
-           if (addressEntity == null) {
-               throw new AddressNotFoundException("ANF-003", "No address by this id");
-           }
-           if (!customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid())) {
-               customerAddressDao.customerAddressByAddress(addressEntity);
-           }
-           if (!customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid())) {
-               throw new AuthorizationFailedException("ATHR-004", "you are authorized to view/delete/update anyones's address");
-           }
+           return addressEntity;
        }
-       return addressEntity;
    }
 
 

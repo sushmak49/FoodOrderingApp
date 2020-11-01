@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+
 @Repository
 public class OrdersDao {
 
@@ -43,35 +44,45 @@ public class OrdersDao {
     }
 
     //Get orders by address entity
-    public List<OrdersEntity> getOrdersByAddress(AddressEntity addressEntity) {
+    public List<OrderEntity> getOrdersByAddress(AddressEntity addressEntity) {
         try {
-            return entityManager.createNamedQuery("ordersByAddress", OrdersEntity.class).setParameter("address", addressEntity).getResultList();
+            return entityManager.createNamedQuery("ordersByAddress", OrderEntity.class).setParameter("address", addressEntity).getResultList();
         } catch (NoResultException nre) {
             return null;
         }
     }
 
     //Creating/Saving new order
-    public OrdersEntity createOrder(OrdersEntity orderEntity) {
+    public OrderEntity createOrder(OrderEntity orderEntity) {
         entityManager.persist(orderEntity);
         return orderEntity;
     }
 
     //List all past orders of customer
-    public List<OrdersEntity> getOrdersByCustomers(CustomerEntity customerEntity) {
+    public List<OrderEntity> getOrdersByCustomers(String customerId) {
         try {
-            return entityManager.createNamedQuery("ordersByCustomer", OrdersEntity.class).setParameter("customer", customerEntity).getResultList();
+            return entityManager.createNamedQuery("ordersByCustomer", OrderEntity.class).setParameter("customerId", customerId).getResultList();
         } catch (NoResultException nre) {
             return null;
         }
     }
 
     //List all orders by restaurant
-    public List<OrdersEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity) {
+    public List<OrderEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity) {
         try {
-            return entityManager.createNamedQuery("ordersByRestaurant", OrdersEntity.class).setParameter("restaurant", restaurantEntity).getResultList();
+            return entityManager.createNamedQuery("ordersByRestaurant", OrderEntity.class).setParameter("restaurant", restaurantEntity).getResultList();
         } catch (NoResultException nre) {
             return null;
         }
+    }
+
+    public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
+        entityManager.persist(orderItemEntity);
+        return orderItemEntity;
+    }
+
+    public OrderEntity saveOrderDetail(OrderEntity newOrder) {
+        entityManager.persist(newOrder);
+        return newOrder;
     }
 }

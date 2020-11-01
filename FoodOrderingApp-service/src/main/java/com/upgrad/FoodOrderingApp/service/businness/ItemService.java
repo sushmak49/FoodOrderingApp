@@ -41,7 +41,7 @@ public class ItemService {
     //Sorted by number of orders - descending
     public List<ItemEntity> getItemsByPopularity(RestaurantEntity restaurantEntity) {
         List<ItemEntity> itemEntityList = new ArrayList<>();
-        for (OrdersEntity orderEntity : orderDao.getOrdersByRestaurant(restaurantEntity)) {
+        for (OrderEntity orderEntity : orderDao.getOrdersByRestaurant(restaurantEntity)) {
             for (OrderItemEntity ordersItemEntity : orderItemDao.getItemsByOrder(orderEntity)) {
                 itemEntityList.add(ordersItemEntity.getItem());
             }
@@ -100,7 +100,7 @@ public class ItemService {
         return restaurantItemEntityList;
     }
 
-    public List<OrderItemEntity> getItemsByOrder(OrdersEntity orderEntity) {
+    public List<OrderItemEntity> getItemsByOrder(OrderEntity orderEntity) {
         return orderItemDao.getItemsByOrder(orderEntity);
     }
 }
