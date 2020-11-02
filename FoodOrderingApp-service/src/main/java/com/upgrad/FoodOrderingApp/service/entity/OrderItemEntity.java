@@ -1,103 +1,97 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "order_item", schema = "public", catalog = "restaurantdb")
-public class OrderItemEntity {
-    private int id;
-    private int orderId;
-    private int itemId;
-    private int quantity;
-    private int price;
-    private OrdersEntity ordersByOrderId;
-    private ItemEntity itemByItemId;
-
+@NamedQueries({
+        @NamedQuery(name = "itemsByOrderId", query = "select o from OrderItemEntity o where o.order.id = :id"),
+        @NamedQuery(name = "itemsByOrder", query = "select q from OrderItemEntity q where q.order = :orderEntity")
+})
+public class OrderItemEntity implements Serializable {
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private OrderEntity order;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    @NotNull
+    private ItemEntity item;
+
+    @Column(name = "quantity")
+    @NotNull
+    private Integer quantity;
+
+    @Column(name = "price")
+    @NotNull
+    private Integer price;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "order_id", nullable = false)
-    public int getOrderId() {
-        return orderId;
+    public OrderEntity getOrder() {
+        return order;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrder(OrderEntity order) {
+        this.order = order;
     }
 
-    @Basic
-    @Column(name = "item_id", nullable = false)
-    public int getItemId() {
-        return itemId;
+    public ItemEntity getItem() {
+        return item;
     }
 
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
+    public void setItem(ItemEntity item) {
+        this.item = item;
     }
 
-    @Basic
-    @Column(name = "quantity", nullable = false)
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    @Basic
-    @Column(name = "price", nullable = false)
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderItemEntity that = (OrderItemEntity) o;
-        return id == that.id &&
-                orderId == that.orderId &&
-                itemId == that.itemId &&
-                quantity == that.quantity &&
-                price == that.price;
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderId, itemId, quantity, price);
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
-    public OrdersEntity getOrdersByOrderId() {
-        return ordersByOrderId;
-    }
-
-    public void setOrdersByOrderId(OrdersEntity ordersByOrderId) {
-        this.ordersByOrderId = ordersByOrderId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
-    public ItemEntity getItemByItemId() {
-        return itemByItemId;
-    }
-
-    public void setItemByItemId(ItemEntity itemByItemId) {
-        this.itemByItemId = itemByItemId;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

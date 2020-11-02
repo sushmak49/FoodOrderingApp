@@ -1,9 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import java.time.ZonedDateTime;
 
 @Entity
@@ -23,42 +22,38 @@ import java.time.ZonedDateTime;
 })
 public class CustomerAuthEntity implements Serializable {
 
+    @Column(name = "login_at")
+    ZonedDateTime loginAt;
+
+    @Column(name = "logout_at")
+    ZonedDateTime logoutAt;
+
+    @Column(name = "expires_at")
+    ZonedDateTime expiresAt;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
     private Integer id;
 
+    @Column(name = "uuid")
     @Size(max = 200)
     @NotNull
-    @Column(name = "uuid")
     private String uuid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "customer_id")
+    @ToStringExclude
     private CustomerEntity customer;
 
-    @Size(max = 500)
     @Column(name = "access_token")
+    @Size(max = 500)
+    @ToStringExclude
+    @HashCodeExclude
     private String accessToken;
-
-    @Column(name = "login_at")
-    private ZonedDateTime loginAt;
-
-    @Column(name = "logout_at")
-    private ZonedDateTime logoutAt;
-
-    @Column(name = "expires_at")
-    private ZonedDateTime expiresAt;
-
-    public CustomerEntity getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerEntity customerEntity) {
-        this.customer = customerEntity;
-    }
 
     public Integer getId() {
         return id;
@@ -74,6 +69,14 @@ public class CustomerAuthEntity implements Serializable {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public String getAccessToken() {
@@ -110,12 +113,12 @@ public class CustomerAuthEntity implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
     @Override

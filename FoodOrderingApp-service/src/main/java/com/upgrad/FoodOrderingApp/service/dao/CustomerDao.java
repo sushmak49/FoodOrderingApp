@@ -12,13 +12,13 @@ public class CustomerDao {
 
     @PersistenceContext private EntityManager entityManager;
 
-
+    //Save a customer entity in DB
     public CustomerEntity saveCustomer(final CustomerEntity customerEntity) {
         entityManager.persist(customerEntity);
         return customerEntity;
     }
 
-
+    //get customer entity based on contact number
     public CustomerEntity getCustomerByContactNumber(final String contactNumber) {
         try {
             return entityManager
@@ -30,7 +30,7 @@ public class CustomerDao {
         }
     }
 
-
+    //Update customer details in DB
     public CustomerEntity updateCustomer(final CustomerEntity customerEntity) {
         entityManager.merge(customerEntity);
         return customerEntity;

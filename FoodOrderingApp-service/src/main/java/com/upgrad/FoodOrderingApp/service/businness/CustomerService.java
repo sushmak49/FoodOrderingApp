@@ -25,16 +25,20 @@ import java.util.regex.Pattern;
 @Service
 public class CustomerService {
 
-    @Autowired private CustomerDao customerDao;
+    @Autowired
+    private CustomerDao customerDao;
 
-    @Autowired private PasswordCryptographyProvider passwordCryptographyProvider;
+    @Autowired
+    private PasswordCryptographyProvider passwordCryptographyProvider;
 
-    @Autowired private CustomerAuthDao customerAuthDao;
+    @Autowired
+    private CustomerAuthDao customerAuthDao;
 
+    //Validate and Save customer details
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity saveCustomer(CustomerEntity customerEntity)
             throws SignUpRestrictedException {
-
+        //Validate the user inputs for customer entity
         if (!customerEntity.getFirstName().isEmpty()
                 && !customerEntity.getEmailAddress().isEmpty()
                 && !customerEntity.getContactNumber().isEmpty()
@@ -64,7 +68,7 @@ public class CustomerService {
         }
     }
 
-
+    //Service method to validate customer who wants to login
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity authenticate(String username, String password)
             throws AuthenticationFailedException {
@@ -94,6 +98,7 @@ public class CustomerService {
         return customerAuthEntity;
     }
 
+    //Service method to check if customer can logout and update the logout time
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity logout(
             final String accessToken)
@@ -106,13 +111,13 @@ public class CustomerService {
         return customerAuthEntity;
     }
 
-
+    //Service method to update customer details
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomer(final CustomerEntity customerEntity) {
         return customerDao.updateCustomer(customerEntity);
     }
 
-
+    //Service method to check if customer who wants to perform operations is logged-in/logged-out/his session is expired
     public CustomerEntity getCustomer(String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerAuthDao.getCustomerAuthByToken(accessToken);
         if (customerAuthEntity != null) {
@@ -124,14 +129,14 @@ public class CustomerService {
                 throw new AuthorizationFailedException(
                         "ATHR-003", "Your session is expired. Log in again to access this endpoint.");
             }
-                return (CustomerEntity) customerAuthEntity.getCustomer();
+            return (CustomerEntity) customerAuthEntity.getCustomer();
         } else {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
         }
 //        return customerAuthEntity.getCustomer();
     }
 
-
+    //Service method to update password of a customer based on old password correctness and new password strength
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomerPassword(
             final String oldPassword, final String newPassword, final CustomerEntity customerEntity)
@@ -151,15 +156,17 @@ public class CustomerService {
         }
     }
 
+    //Method to check if the entered contact number during sign-up is already taken
     private boolean isContactNumberInUse(final String contactNumber) {
         return (customerDao.getCustomerByContactNumber(contactNumber) != null);
     }
 
+    //Method to check if the entered email ID during sign-up is already taken
     private boolean isValidEmail(final String emailAddress) {
         String regex = "[a-zA-Z0-9][a-zA-Z0-9]+@[a-zA-Z0-9][a-zA-Z0-9]+[.][a-zA-Z0-9][a-zA-Z0-9]+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(emailAddress);
-        if (matcher.matches()){
+        if (matcher.matches()) {
             return true;
         } else {
 
@@ -167,7 +174,7 @@ public class CustomerService {
         }
     }
 
-
+    //Method to check if the entered contact number during sign-up is in correct format
     private boolean isValidContactNumber(final String contactNumber) {
         if (contactNumber.length() != 10) {
             return false;
@@ -180,6 +187,7 @@ public class CustomerService {
         return true;
     }
 
+    //Method to check for password strength
     private boolean isValidPassword(final String password) {
         return password.matches("^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^]).{8,}$");
     }

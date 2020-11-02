@@ -1,9 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.*;
 
 import javax.persistence.*;
 
@@ -20,25 +17,24 @@ import java.io.Serializable;
         @NamedQuery(name = "getAllStates", query = "select s from StateEntity s")
 })
 public class StateEntity implements Serializable {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
     private Integer id;
 
-    @Size(max = 200)
+    @Column(name = "uuid")
     @NotNull
-    @Column(name = "uuid", unique = true)
+    @Size(max = 200)
     private String uuid;
 
-    @Size(max = 30)
     @Column(name = "state_name")
+    @Size(max = 30)
     private String stateName;
 
     public StateEntity() {}
 
-    public StateEntity(
-            @NotNull @Size(max = 200) String uuid, @NotNull @Size(max = 30) String stateName) {
+    public StateEntity(@NotNull @Size(max = 200) String uuid, @Size(max = 30) String stateName) {
         this.uuid = uuid;
         this.stateName = stateName;
     }
@@ -69,12 +65,12 @@ public class StateEntity implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
     @Override

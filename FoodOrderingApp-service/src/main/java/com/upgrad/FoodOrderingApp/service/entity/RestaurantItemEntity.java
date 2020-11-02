@@ -1,16 +1,34 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+//removed unused named queries
 @Entity
 @Table(name = "restaurant_item", schema = "public", catalog = "restaurantdb")
 public class RestaurantItemEntity {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private RestaurantEntity restaurantByRestaurantId;
-    private int itemId;
-    private int restaurantId;
-    private ItemEntity itemByItemId;
+
+//    private RestaurantEntity restaurantByRestaurantId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private ItemEntity itemId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private RestaurantEntity restaurantId;
+//    private ItemEntity itemByItemId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -35,43 +53,40 @@ public class RestaurantItemEntity {
         return Objects.hash(id);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
-    public RestaurantEntity getRestaurantByRestaurantId() {
-        return restaurantByRestaurantId;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
+//    public RestaurantEntity getRestaurantByRestaurantId() {
+//        return restaurantByRestaurantId;
+//    }
+//
+//    public void setRestaurantByRestaurantId(RestaurantEntity restaurantByRestaurantId) {
+//        this.restaurantByRestaurantId = restaurantByRestaurantId;
+//    }
 
-    public void setRestaurantByRestaurantId(RestaurantEntity restaurantByRestaurantId) {
-        this.restaurantByRestaurantId = restaurantByRestaurantId;
-    }
-
-    @Basic
-    @Column(name = "item_id", nullable = false)
-    public int getItemId() {
+    public ItemEntity getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(ItemEntity itemId) {
         this.itemId = itemId;
     }
 
-    @Basic
-    @Column(name = "restaurant_id", nullable = false)
-    public int getRestaurantId() {
+    public RestaurantEntity getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(int restaurantId) {
+    public void setRestaurantId(RestaurantEntity restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
-    public ItemEntity getItemByItemId() {
-        return itemByItemId;
-    }
 
-    public void setItemByItemId(ItemEntity itemByItemId) {
-        this.itemByItemId = itemByItemId;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
+//    public ItemEntity getItemByItemId() {
+//        return itemByItemId;
+//    }
+//
+//    public void setItemByItemId(ItemEntity itemByItemId) {
+//        this.itemByItemId = itemByItemId;
+//    }
 }

@@ -1,52 +1,95 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
+
 
 @Entity
 @Table(name = "restaurant", schema = "public", catalog = "restaurantdb")
 @NamedQueries({
         @NamedQuery(
-                name = "getAllRestaurant",
+                name = "getAllRestaurantByRating",
                 query = "select r from RestaurantEntity r order by r.customerRating desc"),
         @NamedQuery(
                 name = "getRestaurantByName",
                 query = "select r from RestaurantEntity r where lower(r.restaurantName) like lower(:restaurantName) order by r.restaurantName asc"),
-        @NamedQuery(
-                name = "getRestaurantByCategoryId",
-                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId order by r.restaurantName asc"),
+//        @NamedQuery(
+//                name = "getRestaurantByCategoryId",
+//                query = "select r from RestaurantEntity r where r.restaurantCategoriesById = :categoryId order by r.restaurantName asc"),
         @NamedQuery(
                 name = "getRestaurantByUuid",
                 query = "select r from RestaurantEntity r where r.uuid= :restaurantUuid order by r.restaurantName asc")
 })
-public class RestaurantEntity {
-    private int id;
-    private String uuid;
-    private String restaurantName;
-    private String photoUrl;
-    private BigInteger customerRating;
-    private int averagePriceForTwo;
-    private int numberOfCustomersRated;
-    private int addressId;
-    private Collection<OrdersEntity> ordersById;
-    private AddressEntity addressByAddressId;
-    private Collection<RestaurantCategoryEntity> restaurantCategoriesById;
-    private Collection<RestaurantItemEntity> restaurantItemsById;
+public class RestaurantEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "restaurant_name")
+    @NotNull
+    @Size(max = 50)
+    private String restaurantName;
+
+    @Column(name = "photo_url")
+    @Size(max = 255)
+    private String photoUrl;
+
+    @Column(name = "customer_rating")
+    @NotNull
+    private double customerRating;
+
+    @Column(name = "average_price_for_two")
+    @NotNull
+    private Integer avgPrice;
+
+    @Column(name = "number_of_customers_rated")
+    @NotNull
+    private Integer numberCustomersRated;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    @ToStringExclude
+    private AddressEntity address;
+
+    @ManyToMany
+    @JoinTable(
+            name = "restaurant_item",
+            joinColumns = {@JoinColumn(name = "restaurant_id")},
+            inverseJoinColumns = {@JoinColumn(name = "item_id")})
+    private List<ItemEntity> items = new ArrayList<>();
+
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<CategoryEntity> categories = new ArrayList<>();
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -55,8 +98,6 @@ public class RestaurantEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "restaurant_name", nullable = false, length = 50)
     public String getRestaurantName() {
         return restaurantName;
     }
@@ -65,8 +106,6 @@ public class RestaurantEntity {
         this.restaurantName = restaurantName;
     }
 
-    @Basic
-    @Column(name = "photo_url", nullable = true, length = 255)
     public String getPhotoUrl() {
         return photoUrl;
     }
@@ -75,99 +114,52 @@ public class RestaurantEntity {
         this.photoUrl = photoUrl;
     }
 
-    @Basic
-    @Column(name = "customer_rating", nullable = false, precision = 0)
-    public BigInteger getCustomerRating() {
+    public double getCustomerRating() {
         return customerRating;
     }
 
-    public void setCustomerRating(BigInteger customerRating) {
+    public void setCustomerRating(double customerRating) {
         this.customerRating = customerRating;
     }
 
-    @Basic
-    @Column(name = "average_price_for_two", nullable = false)
-    public int getAveragePriceForTwo() {
-        return averagePriceForTwo;
+    public Integer getAvgPrice() {
+        return avgPrice;
     }
 
-    public void setAveragePriceForTwo(int averagePriceForTwo) {
-        this.averagePriceForTwo = averagePriceForTwo;
+    public void setAvgPrice(Integer avgPrice) {
+        this.avgPrice = avgPrice;
     }
 
-    @Basic
-    @Column(name = "number_of_customers_rated", nullable = false)
-    public int getNumberOfCustomersRated() {
-        return numberOfCustomersRated;
+    public Integer getNumberCustomersRated() {
+        return numberCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(int numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberCustomersRated(Integer numberCustomersRated) {
+        this.numberCustomersRated = numberCustomersRated;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RestaurantEntity that = (RestaurantEntity) o;
-        return id == that.id &&
-                averagePriceForTwo == that.averagePriceForTwo &&
-                numberOfCustomersRated == that.numberOfCustomersRated &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(restaurantName, that.restaurantName) &&
-                Objects.equals(photoUrl, that.photoUrl) &&
-                Objects.equals(customerRating, that.customerRating);
+    public AddressEntity getAddress() {
+        return address;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, uuid, restaurantName, photoUrl, customerRating, averagePriceForTwo, numberOfCustomersRated);
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
-    @Basic
-    @Column(name = "address_id", nullable = false)
-    public int getAddressId() {
-        return addressId;
+    public List<ItemEntity> getItems() {
+        return items;
     }
 
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
     }
 
-    @OneToMany(mappedBy = "restaurantByRestaurantId")
-    public Collection<OrdersEntity> getOrdersById() {
-        return ordersById;
+    public List<CategoryEntity> getCategories() {
+        return categories;
     }
 
-    public void setOrdersById(Collection<OrdersEntity> ordersById) {
-        this.ordersById = ordersById;
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
-    public AddressEntity getAddressByAddressId() {
-        return addressByAddressId;
-    }
-
-    public void setAddressByAddressId(AddressEntity addressByAddressId) {
-        this.addressByAddressId = addressByAddressId;
-    }
-
-    @OneToMany(mappedBy = "restaurantByRestaurantId")
-    public Collection<RestaurantCategoryEntity> getRestaurantCategoriesById() {
-        return restaurantCategoriesById;
-    }
-
-    public void setRestaurantCategoriesById(Collection<RestaurantCategoryEntity> restaurantCategoriesById) {
-        this.restaurantCategoriesById = restaurantCategoriesById;
-    }
-
-    @OneToMany(mappedBy = "restaurantByRestaurantId")
-    public Collection<RestaurantItemEntity> getRestaurantItemsById() {
-        return restaurantItemsById;
-    }
-
-    public void setRestaurantItemsById(Collection<RestaurantItemEntity> restaurantItemsById) {
-        this.restaurantItemsById = restaurantItemsById;
-    }
 }

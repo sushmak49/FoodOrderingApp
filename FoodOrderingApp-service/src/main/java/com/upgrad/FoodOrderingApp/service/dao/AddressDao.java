@@ -23,7 +23,7 @@ public class AddressDao {
         return addressEntity;
     }
 
-
+    //fetch address details based on customer
     public List<CustomerAddressEntity> customerAddressByCustomer(CustomerEntity customer) {
         List<CustomerAddressEntity> addresses =
                 entityManager
@@ -36,7 +36,8 @@ public class AddressDao {
         return addresses;
     }
 
-    public AddressEntity getAddressByUUID(final String addressUUID) {
+    //Fetch address from DB based on UUID
+    public AddressEntity getAddressByUuid(final String addressUUID) {
         try {
             return entityManager
                     .createNamedQuery("addressByUUID", AddressEntity.class)
@@ -47,13 +48,13 @@ public class AddressDao {
         }
     }
 
-
+    //Delete address in DB
     public AddressEntity deleteAddress(final AddressEntity addressEntity) {
         entityManager.remove(addressEntity);
         return addressEntity;
     }
 
-
+    //update address in DB
     public AddressEntity updateAddress(final AddressEntity addressEntity) {
         return entityManager.merge(addressEntity);
     }

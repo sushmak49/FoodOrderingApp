@@ -1,7 +1,14 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.*;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,25 +21,40 @@ import java.util.Objects;
                 name = "getCategoryByUuid",
                 query = "select c from CategoryEntity c where c.uuid = :categoryUuid")
 })
-public class CategoryEntity {
-    private int id;
-    private String uuid;
-    private String categoryName;
-    private Collection<CategoryItemEntity> categoryItemsById;
-    private Collection<RestaurantCategoryEntity> restaurantCategoriesById;
-
+public class CategoryEntity implements Serializable, Comparable<CategoryEntity> {
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "category_name")
+    @Size(max = 30)
+    private String categoryName;
+
+    @ManyToMany
+    @JoinTable(name = "category_item", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<ItemEntity> items = new ArrayList<>();;
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id"))
+    private List<RestaurantEntity> restaurants = new ArrayList<>();
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -41,8 +63,6 @@ public class CategoryEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "category_name", nullable = true, length = 255)
     public String getCategoryName() {
         return categoryName;
     }
@@ -51,36 +71,39 @@ public class CategoryEntity {
         this.categoryName = categoryName;
     }
 
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
+    }
+
+    public List<RestaurantEntity> getRestaurants() {
+        return restaurants;
+    }
+
+    public void setRestaurants(List<RestaurantEntity> restaurants) {
+        this.restaurants = restaurants;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return id == that.id &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(categoryName, that.categoryName);
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, categoryName);
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
-    @OneToMany(mappedBy = "categoryByCategoryId")
-    public Collection<CategoryItemEntity> getCategoryItemsById() {
-        return categoryItemsById;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
-    public void setCategoryItemsById(Collection<CategoryItemEntity> categoryItemsById) {
-        this.categoryItemsById = categoryItemsById;
-    }
-
-    @OneToMany(mappedBy = "categoryByCategoryId")
-    public Collection<RestaurantCategoryEntity> getRestaurantCategoriesById() {
-        return restaurantCategoriesById;
-    }
-
-    public void setRestaurantCategoriesById(Collection<RestaurantCategoryEntity> restaurantCategoriesById) {
-        this.restaurantCategoriesById = restaurantCategoriesById;
+    @Override
+    public int compareTo(CategoryEntity categoryEntity) {
+        return 0;
     }
 }

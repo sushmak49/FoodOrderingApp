@@ -1,20 +1,37 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.EqualsExclude;
+import org.apache.commons.lang3.builder.HashCodeExclude;
+import org.apache.commons.lang3.builder.ToStringExclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant_category", schema = "public", catalog = "restaurantdb")
-public class RestaurantCategoryEntity {
-    private int id;
-    private RestaurantEntity restaurantByRestaurantId;
-    private int restaurantId;
-    private int categoryId;
-    @OrderBy("CategoryName ASC")
-    private CategoryEntity categoryByCategoryId;
+@NamedQueries({
+        @NamedQuery(name = "getCategoriesByRestaurant", query = "select rc from RestaurantCategoryEntity rc where rc.restaurantEntity.uuid =:restaurantUuid"),
+        @NamedQuery(name = "getRestaurantByCategory", query = "select rc from RestaurantCategoryEntity rc where rc.categoryEntity.uuid =:categoryId")
 
+})
+public class RestaurantCategoryEntity implements Serializable {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
+    private int id;
+
+    @ToStringExclude
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "restaurant_id")
+    private RestaurantEntity restaurantEntity;
+
+    @ToStringExclude
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryEntity;
+
     public int getId() {
         return id;
     }
@@ -23,56 +40,19 @@ public class RestaurantCategoryEntity {
         this.id = id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RestaurantCategoryEntity that = (RestaurantCategoryEntity) o;
-        return id == that.id;
+    public RestaurantEntity getRestaurantEntity() {
+        return restaurantEntity;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setRestaurantEntity(RestaurantEntity restaurantEntity) {
+        this.restaurantEntity = restaurantEntity;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
-    public RestaurantEntity getRestaurantByRestaurantId() {
-        return restaurantByRestaurantId;
+    public CategoryEntity getCategoryEntity() {
+        return categoryEntity;
     }
 
-    public void setRestaurantByRestaurantId(RestaurantEntity restaurantByRestaurantId) {
-        this.restaurantByRestaurantId = restaurantByRestaurantId;
-    }
-
-    @Basic
-    @Column(name = "restaurant_id", nullable = false)
-    public int getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    @Basic
-    @Column(name = "category_id", nullable = false)
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
-    public CategoryEntity getCategoryByCategoryId() {
-        return categoryByCategoryId;
-    }
-
-    public void setCategoryByCategoryId(CategoryEntity categoryByCategoryId) {
-        this.categoryByCategoryId = categoryByCategoryId;
+    public void setCategoryEntity(CategoryEntity categoryEntity) {
+        this.categoryEntity = categoryEntity;
     }
 }

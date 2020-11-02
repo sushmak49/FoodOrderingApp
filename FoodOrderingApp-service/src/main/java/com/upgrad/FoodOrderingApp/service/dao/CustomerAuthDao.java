@@ -12,7 +12,7 @@ public class CustomerAuthDao {
 
     @PersistenceContext private EntityManager entityManager;
 
-
+    //Persist the customer auth token in DB
     public void createCustomerAuthToken(CustomerAuthEntity customerAuthEntity) {
         entityManager.persist(customerAuthEntity);
     }
@@ -30,7 +30,7 @@ public class CustomerAuthDao {
         }
     }
 
-
+    //Update customer authentication details in DB
     public void updateCustomerAuth(final CustomerAuthEntity updatedCustomerAuthEntity) {
         entityManager.merge(updatedCustomerAuthEntity);
     }

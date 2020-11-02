@@ -1,30 +1,57 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.apache.commons.lang3.builder.*;
+
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
-@Table(name = "coupon", schema = "public", catalog = "restaurantdb")
-public class CouponEntity {
-    private int id;
-    private String uuid;
-    private String couponName;
-    private int percent;
-    private Collection<OrdersEntity> ordersById;
-
+@Table(name = "coupon")
+@NamedQueries({
+        @NamedQuery(
+                name = "couponByCouponName",
+                query = "SELECT C FROM CouponEntity C WHERE C.couponName = :couponName"),
+        @NamedQuery(name = "couponByUUID", query = "SELECT C FROM CouponEntity C WHERE C.uuid = :uuid")
+})
+public class CouponEntity implements Serializable {
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToStringExclude
+    private Integer id;
+
+    @Column(name = "uuid")
+    @NotNull
+    @Size(max = 200)
+    private String uuid;
+
+    @Column(name = "coupon_name")
+    @Size(max = 255)
+    private String couponName;
+
+    @Column(name = "percent")
+    @NotNull
+    private Integer percent;
+
+    public CouponEntity() {}
+
+    public CouponEntity(final String uuid, final String couponName, Integer percent) {
+        this.uuid = uuid;
+        this.couponName = couponName;
+        this.percent = percent;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "uuid", nullable = false, length = 200)
     public String getUuid() {
         return uuid;
     }
@@ -33,8 +60,6 @@ public class CouponEntity {
         this.uuid = uuid;
     }
 
-    @Basic
-    @Column(name = "coupon_name", nullable = true, length = 255)
     public String getCouponName() {
         return couponName;
     }
@@ -43,38 +68,26 @@ public class CouponEntity {
         this.couponName = couponName;
     }
 
-    @Basic
-    @Column(name = "percent", nullable = false)
-    public int getPercent() {
+    public Integer getPercent() {
         return percent;
     }
 
-    public void setPercent(int percent) {
+    public void setPercent(Integer percent) {
         this.percent = percent;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CouponEntity that = (CouponEntity) o;
-        return id == that.id &&
-                percent == that.percent &&
-                Objects.equals(uuid, that.uuid) &&
-                Objects.equals(couponName, that.couponName);
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj, Boolean.FALSE);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uuid, couponName, percent);
+        return HashCodeBuilder.reflectionHashCode(this, Boolean.FALSE);
     }
 
-    @OneToMany(mappedBy = "couponByCouponId")
-    public Collection<OrdersEntity> getOrdersById() {
-        return ordersById;
-    }
-
-    public void setOrdersById(Collection<OrdersEntity> ordersById) {
-        this.ordersById = ordersById;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
