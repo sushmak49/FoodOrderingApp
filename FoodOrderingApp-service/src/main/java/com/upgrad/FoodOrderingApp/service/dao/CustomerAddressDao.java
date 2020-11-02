@@ -15,13 +15,12 @@ public class CustomerAddressDao {
 
     @PersistenceContext private EntityManager entityManager;
 
+    //Creating an entry in customer_address table
     public void createCustomerAddress(final CustomerAddressEntity customerAddressEntity) {
         entityManager.persist(customerAddressEntity);
     }
 
     /*getting back the  address of a customer using given address.*/
-
-
     public CustomerAddressEntity customerAddressByAddress(final AddressEntity address) {
         try {
             return entityManager

@@ -76,11 +76,13 @@ public class OrdersDao {
         }
     }
 
+    //Save a new order item in DB
     public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
         entityManager.persist(orderItemEntity);
         return orderItemEntity;
     }
 
+    //Save order details in DB
     public OrderEntity saveOrderDetail(OrderEntity newOrder) {
         entityManager.persist(newOrder);
         return newOrder;

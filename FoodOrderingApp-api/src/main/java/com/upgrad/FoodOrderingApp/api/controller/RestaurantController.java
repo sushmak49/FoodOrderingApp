@@ -124,6 +124,7 @@ public class RestaurantController {
 
 
     //List all restaurants that is mapped to a particular category
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, path = "/restaurant/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantListResponse> getRestaurantsByCategoryId(
             @PathVariable("category_id") final String categoryId)
@@ -167,6 +168,7 @@ public class RestaurantController {
 
 
     //Get restaurant details by restaurant ID
+    @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, path = "/api/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse> getRestaurantById(
             @PathVariable("restaurant_id") final String restaurantId)

@@ -72,12 +72,11 @@ public class RestaurantService {
      * Get a list of all Restaurant entities by UUId
      */
     public RestaurantEntity restaurantByUUID(String restaurantUuid) throws RestaurantNotFoundException {
-        if (restaurantUuid.equals("")) {
+        if (restaurantUuid.trim().length() == 0||restaurantUuid.equals("")||restaurantUuid.equals("emptyString")) {
             throw new RestaurantNotFoundException("RNF-002", "Restaurant id field should not be empty");
         }
 
         RestaurantEntity restaurantEntity = restaurantDao.getRestaurantByUuid(restaurantUuid);
-
         if (restaurantEntity == null) {
             throw new RestaurantNotFoundException("RNF-001", "No restaurant by this id");
         }

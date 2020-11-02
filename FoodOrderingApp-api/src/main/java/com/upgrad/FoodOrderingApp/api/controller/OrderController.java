@@ -38,6 +38,7 @@ public class OrderController {
     @Autowired
     private RestaurantService restaurantService;
 
+    //Endpoint to fetch coupon based on coupon name
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,
@@ -64,6 +65,7 @@ public class OrderController {
         return new ResponseEntity<CouponDetailsResponse>(couponDetailsResponse, HttpStatus.OK);
     }
 
+    //Endpoint to fetch all past saved orders of customer who is logged-in
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,
@@ -159,6 +161,7 @@ public class OrderController {
         return new ResponseEntity(customerOrderResponse, HttpStatus.OK);
     }
 
+    //Endpoint to save the order of a customer
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.POST,

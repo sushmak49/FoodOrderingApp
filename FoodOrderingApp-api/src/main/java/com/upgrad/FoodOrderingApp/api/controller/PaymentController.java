@@ -25,6 +25,7 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    //This endpoint is used to fetch all the available payment modes
     @CrossOrigin
     @RequestMapping(
             method = RequestMethod.GET,

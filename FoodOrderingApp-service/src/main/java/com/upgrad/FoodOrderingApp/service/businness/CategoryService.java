@@ -34,6 +34,9 @@ public class CategoryService {
      * @throws CategoryNotFoundException
      */
     public CategoryEntity getCategoryById(String categoryUuid) throws CategoryNotFoundException {
+        if (categoryUuid == null || categoryUuid.equals("")) {
+            CategoryEntity category = categoryDao.getCategoryByUuid(categoryUuid);
+        }
         CategoryEntity category = categoryDao.getCategoryByUuid(categoryUuid);
         if (category == null) {
             throw new CategoryNotFoundException("CNF-002", "No category by this id");

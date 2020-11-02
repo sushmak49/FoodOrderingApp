@@ -15,11 +15,13 @@ public class PaymentDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    //fetch all payment modes from DB
     public List<PaymentEntity> getAllPaymentMethods() {
         List<PaymentEntity> paymentList = entityManager.createNamedQuery("getAllPaymentModes", PaymentEntity.class).getResultList();
         return paymentList;
     }
 
+    //fetch payment modes from DB based on UUID
     public PaymentEntity getPaymentbyUuid(final String uuid) {
         try {
             return entityManager.createNamedQuery("paymentByUUID", PaymentEntity.class)

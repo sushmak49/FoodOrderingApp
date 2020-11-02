@@ -25,6 +25,7 @@ public class OrderService {
     @Autowired
     private CustomerService customerService;
 
+    //Service method to get coupon by coupon name
     public CouponEntity getCouponByCouponName(String couponName) throws AuthorizationFailedException, CouponNotFoundException {
 
         if (couponName != null || !couponName.isEmpty()) {
@@ -39,6 +40,7 @@ public class OrderService {
         }
     }
 
+    //Service method to fetch all order based on customer logged-in
     public List<OrderEntity> getOrdersByCustomers(String customerId) throws AuthorizationFailedException {
         List<OrderEntity> orderEntityList = orderDao.getOrdersByCustomers(customerId);
         return orderEntityList;
@@ -53,6 +55,7 @@ public class OrderService {
         return couponEntity;
     }
 
+    //Service method to save order of a customer
     public OrderEntity saveOrder(OrderEntity newOrder) {
         newOrder.setUuid(UUID.randomUUID().toString());
         newOrder.setDate(new Date());
@@ -63,6 +66,7 @@ public class OrderService {
 
     }
 
+    //Service method to save order item of an order
     @Transactional(propagation = Propagation.REQUIRED)
     public OrderItemEntity saveOrderItem(OrderItemEntity orderItemEntity) {
         orderDao.saveOrderItem(orderItemEntity);

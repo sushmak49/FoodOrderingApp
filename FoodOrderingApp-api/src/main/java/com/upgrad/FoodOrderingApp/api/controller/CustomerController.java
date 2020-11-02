@@ -44,7 +44,7 @@ public class CustomerController {
         customerEntity.setEmailAddress(signupCustomerRequest.getEmailAddress());
         customerEntity.setContactNumber(signupCustomerRequest.getContactNumber());
         customerEntity.setPassword(signupCustomerRequest.getPassword());
-
+        //Validate the customer details passed and save the customer details
         CustomerEntity createdCustomerEntity = customerService.saveCustomer(customerEntity);
 
         SignupCustomerResponse customerResponse =
@@ -67,7 +67,7 @@ public class CustomerController {
         byte[] decode;
         String contactNumber;
         String password;
-
+        //
         try {
             decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
             String decodedText = new String(decode);
@@ -78,12 +78,12 @@ public class CustomerController {
             throw new AuthenticationFailedException(
                     "ATH-003", "Incorrect format of decoded customer name and password");
         }
-
+        //Validate the customer details and store the access-token of logged-in customer
         CustomerAuthEntity createdCustomerAuthEntity =
                 customerService.authenticate(contactNumber, password);
 
         LoginResponse loginResponse = new LoginResponse();
-        //
+
         loginResponse.setId(createdCustomerAuthEntity.getCustomer().getUuid());
         loginResponse.setFirstName(createdCustomerAuthEntity.getCustomer().getFirstName());
         loginResponse.setLastName(createdCustomerAuthEntity.getCustomer().getLastName());
@@ -111,7 +111,7 @@ public class CustomerController {
 
         //Check valid authorization format <Bearer accessToken>
         String accessToken = Utility.getAccessToken(authorizationToken);
-
+        //Validate customer who wants to logout and store logout time in DB
         CustomerAuthEntity customerAuthEntity = customerService.logout(accessToken);
         LogoutResponse logoutResponse =
                 new LogoutResponse()
@@ -142,7 +142,7 @@ public class CustomerController {
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
         customerEntity.setFirstName(updateCustomerRequest.getFirstName());
         customerEntity.setLastName(updateCustomerRequest.getLastName());
-
+        //Validate and Update the customer details in DB
         CustomerEntity updatedCustomerEntity = customerService.updateCustomer(customerEntity);
 
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse();
@@ -179,7 +179,7 @@ public class CustomerController {
 
               CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
-
+            //Validate the old password for correctness and new password for strength and store new password of customer
             CustomerEntity updatedCustomerEntity =
                     customerService.updateCustomerPassword(oldPassword, newPassword, customerEntity);
 
