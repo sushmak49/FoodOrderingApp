@@ -169,7 +169,7 @@ public class RestaurantController {
 
     //Get restaurant details by restaurant ID
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, path = "/api/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.GET, path = "/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<RestaurantDetailsResponse> getRestaurantById(
             @PathVariable("restaurant_id") final String restaurantId)
             throws RestaurantNotFoundException {
